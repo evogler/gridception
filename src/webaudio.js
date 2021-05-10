@@ -64,8 +64,8 @@ const playSound = (fname, startTime, vol, rate) => {
   gain.gain.value = vol;
   bufS.connect(gain);
   gain.connect(audioCtx.destination);
-  // bufS.start(startTime);
-  bufS.start();
+  bufS.start(startTime);
+  // bufS.start();
   return bufS;
 };
 
@@ -83,6 +83,19 @@ const nextSound = (() => {
   }
 })();
 
-const play = () => playSound(nextSound(), 1, 1, 1);
+const play = () => {
+  const now = audioCtx.currentTime;
+  const playTime = now + 0;
+  playSound(nextSound(), playTime, 1, 1)
+};
+
+const handleKey = key => {
+  const drumPart = drumCodes[key];
+  if (drumPart) {
+    playSound(drumPart, 0, 1, 1);
+  }
+};
+
+document.body.addEventListener('keypress', e => handleKey(e.key));
 
 console.log('webaudio.js loaded.');
