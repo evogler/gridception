@@ -1,5 +1,3 @@
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
 const drums = [
   'kick',
   'snare',
@@ -13,7 +11,7 @@ const sampleLags = {
   'kick': 0.026,
   'snare': 0.0293,
   'hat': 0.0267,
-  'sidestick': 0.0245,
+  'sidestick-2': 0.0245,
   // 'ride-bell': 0.0395,
   // 'ride': 0.0443,
 };
@@ -26,6 +24,8 @@ const drumCodes = {
   // 'b': 'ride-bell',
   // 'r': 'ride',
 };
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 const buffers = {};
 
@@ -56,7 +56,7 @@ const loadSomeDrums = () => {
   }
 };
 
-const playSound = (fname, startTime, vol, rate) => {
+const playSound = (fname, startTime = 0, vol = 1, rate = 1) => {
   const bufS = audioCtx.createBufferSource();
   const gain = audioCtx.createGain();
   bufS.buffer = buffers[fname];
@@ -73,29 +73,6 @@ const playSound = (fname, startTime, vol, rate) => {
 
 loadSomeDrums();
 
-const nextSound = (() => {
-  let pos = 0;
-  const sounds = ['kick', 'hat', 'snare', 'hat'];
-  return () => {
-    const res = sounds[pos];
-    pos = (pos + 1) % sounds.length;
-    return res;
-  }
-})();
-
-const play = () => {
-  const now = audioCtx.currentTime;
-  const playTime = now + 0;
-  playSound(nextSound(), playTime, 1, 1)
-};
-
-const handleKey = key => {
-  const drumPart = drumCodes[key];
-  if (drumPart) {
-    playSound(drumPart, 0, 1, 1);
-  }
-};
-
-document.body.addEventListener('keypress', e => handleKey(e.key));
-
 console.log('webaudio.js loaded.');
+
+export default playSound;

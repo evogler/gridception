@@ -12,16 +12,12 @@ const HorizontalGrid = ({ length }) => {
 
   const [state, setState] = useState(xRange.map(i => ['off', 'on'][i % 2]));
 
-  const handleClick = (index) => {
-    console.log('clicked', index);
-    setState(updateArray(state, index, (val) => val === 'on' ? 'off' : 'on'));
-  };
+  const handleClick = (index) => setState(updateArray(state, index, (val) => val === 'on' ? 'off' : 'on'));
 
   return (
     <div>
       {xRange.map(i => (
         <GridCell key={i} index={i} status={state[i]} active={i === 3} click={handleClick} />
-
       ))}
     </ div>
   );
