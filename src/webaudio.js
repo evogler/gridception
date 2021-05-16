@@ -75,4 +75,4 @@ loadSomeDrums();
 
 console.log('webaudio.js loaded.');
 
-export default playSound;
+export { playSound, audioCtx };
