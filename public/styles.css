@@ -1,3 +1,11 @@
+.horizontal-grid-label {
+  display: inline-block;
+  margin-right: 10px;
+  padding-top: 20px;
+  width: 50px;
+  /* border: 1px solid #888; */
+}
+
 .grid-cell {
   display: inline-block;
   width: 50px;
