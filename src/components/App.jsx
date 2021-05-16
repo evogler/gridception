@@ -1,8 +1,8 @@
 import React from 'react';
-import Grid from './Grid.jsx';
+import HorizontalGrid from './HorizontalGrid.jsx';
 
 const App = (props) => (
-  <Grid length={8} />
+  <HorizontalGrid length={18} />
 );
 
 export default App;
