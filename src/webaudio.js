@@ -26,6 +26,7 @@ const drumCodes = {
 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+window.audioCtx = audioCtx;
 
 const buffers = {};
 

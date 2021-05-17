@@ -9,16 +9,22 @@ const scheduler = new Scheduler();
 const App = (props) => {
   const initialParts = [
     {
-      label: 'snare',
-      sound: ['snare'],
+      label: 'stick',
+      sound: ['sidestick-2'],
       duration: [1],
-      status: ['on', 'off', 'on', 'off', 'on', 'off', 'off'],
+      status: ['off', 'off', 'off', 'off', 'on', 'off', 'off', 'off', 'off', 'off'],
+    },
+    {
+      label: 'hat',
+      sound: ['hat'],
+      duration: [1],
+      status: ['on', 'off', 'off', 'on', 'off', 'off', 'on', 'off', 'off',  ],
     },
     {
       label: 'kick',
       sound: ['kick'],
       duration: [1],
-      status: ['on', 'off', 'off', 'off'],
+      status: ['on', 'off', 'off', 'off', 'off', 'off', 'off', 'off'],
     },
   ];
   const [parts, setParts] = useState(initialParts);
@@ -42,13 +48,13 @@ const App = (props) => {
     console.log(newParts[partIndex].status);
   };
 
-  const startMusic = () => {
-    scheduler.play();
+  const buttonClick = () => {
+    scheduler.click();
   }
 
   return (
     <div id="app">
-      <button onClick={startMusic}>PLAY</button>
+      <button className="button" onClick={buttonClick}>PLAY</button>
       {parts.map((part, idx) => (
         <HorizontalGrid key={idx} label={part.label} status={part.status} update={updatePart(idx)} />
       ))}
