@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
+import Line from './Line.jsx';
 import { updateArray } from '../util.js';
 import interpretPart from '../interpreter.js';
 import Scheduler from '../scheduler.js';
@@ -55,9 +56,12 @@ const App = (props) => {
   return (
     <div id="app">
       <button className="button" onClick={buttonClick}>PLAY</button>
-      {parts.map((part, idx) => (
-        <HorizontalGrid key={idx} label={part.label} status={part.status} update={updatePart(idx)} />
-      ))}
+      <div className="grids">
+        {parts.map((part, idx) => (
+          <HorizontalGrid key={idx} label={part.label} status={part.status} update={updatePart(idx)} />
+        ))}
+      </div>
+      <Line coords={[205, 205, 857, 403]} />
     </div>
   );
 };
