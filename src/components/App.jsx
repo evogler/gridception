@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
+import Header from './Header.jsx';
 import Line from './Line.jsx';
 import { updateArray } from '../util.js';
 import interpretPart from '../interpreter.js';
@@ -43,7 +44,7 @@ const App = (props) => {
 
   const [parts, setParts] = useState(initialParts);
   const [actives, setActives] = useState(Object.fromEntries(parts.map(part => [part.id, 0])));
-
+  const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
     initialParts.forEach(part => {
@@ -68,10 +69,14 @@ const App = (props) => {
     scheduler.click();
   }
 
+  scheduler.addTimeListener((time) => setCurrentTime(time));
 
   return (
     <div id="app">
-      <button className="button" onClick={buttonClick}>PLAY</button>
+      <Header
+        buttonClick={buttonClick}
+        currentTime={currentTime}
+      />
       <div className="grids draggable"
         onMouseDown={(e) => console.log('MOUSEDOWN', e.target.className)}
       >

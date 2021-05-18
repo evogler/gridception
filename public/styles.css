@@ -1,5 +1,20 @@
 body {
-  background-color: #aaa;
+  background-color: #ddd;
+}
+
+.header {
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  background-color: #fff;
+  border-bottom: 1px solid #888;
+  margin: -10px;
+  padding: 20px 10px 0px 30px;
+}
+
+button {
+  /* font-size: 1.2em; */
+  margin-right: 30px;
 }
 
 .draggable {
@@ -16,10 +31,12 @@ body {
   left: 200px;
   margin: 5px;
   width: fit-content;
-  padding: 5px;
+  padding: 10px 8px 5px 8px;
   border: 1px solid #888;
   border-radius: 5px;
-  cursor:all-scroll;
+  background-color: white;
+  transform-origin: top left;
+  transform: scale(.8);
 }
 
 .horizontal-grid-label {
@@ -46,7 +63,7 @@ body {
 }
 
 .grid-cell-off {
-  background-color: #ddd;
+  background-color: #eee;
 }
 
 .grid-cell-active {

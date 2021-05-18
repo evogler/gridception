@@ -12,6 +12,8 @@ class Scheduler {
     this.warmupTime = 100; // ms offset at start to allow first notes to play;
     this.playing = false;
     this.id = Math.floor(Math.random() * 1e8);
+    this.timeListeners = [];
+    this.timePublishInterval = 50; // ms
   }
 
   addPart(part) {
@@ -43,16 +45,32 @@ class Scheduler {
     this.startTime = this.audioCtx.currentTime;
     this.lastEventWindowEnd = 0;
     this._eventLoop();
+    this._publishTimeLoop();
     document.querySelector('.button').textContent = 'STOP';
   }
 
   stop() {
-    console.log('STOP');
     this.playing = false;
+    this.pauseTime = this._now();
     document.querySelector('.button').textContent = 'PLAY';
   }
 
+  addTimeListener(fn) {
+    this.timeListeners.push(fn);
+  }
+
+  _publishTimeLoop() {
+    const now = this.playing ? this._now() : this.pauseTime;
+    let time = this._realTimeToMusicTime(now);
+    time -= this.warmupTime / 1000;
+    this.timeListeners.forEach(fn => fn(time));
+    if (this.playing) {
+      setTimeout(this._publishTimeLoop.bind(this), this.timePublishInterval);
+    }
+  }
+
   _now() {
+    // returns current time in seconds
     return this.audioCtx.currentTime - this.startTime;
   }
 
