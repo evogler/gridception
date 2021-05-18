@@ -4,6 +4,7 @@ import Header from './Header.jsx';
 import Line from './Line.jsx';
 import { updateArray } from '../util.js';
 import interpretPart from '../interpreter.js';
+import Node from '../node.js';
 import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
@@ -26,7 +27,6 @@ const App = (props) => {
     },
     {
       label: 'hat',
-      sound: ['hat'],
       duration: [1],
       status: xx(['on', 'off', 'off'], 3).slice(0, 7),
       id: 1,
