@@ -31,6 +31,7 @@ const interpretPart = part => {
       const event = {
         time: timePos,
         status: status[index % status.length],
+        indexFn: () => part.indexFn(index % status.length),
         sound: sound[index % sound.length],
         listeners: [],
       };

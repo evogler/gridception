@@ -7,28 +7,43 @@ import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
 
+const xx = (val, count) => [...new Array(count)].fill(val).flat(9);
+
 const App = (props) => {
+  const updateActive = (id, val) => {
+    setActives(acts => ({ ...acts, [id]: val }));
+  }
+
   const initialParts = [
     {
       label: 'stick',
       sound: ['sidestick-2'],
       duration: [1],
-      status: ['off', 'off', 'off', 'off', 'on', 'off', 'off', 'off', 'off', 'off'],
+      status: xx(['off', 'off', 'off', 'off', 'off', 'off', 'on', 'off', 'off', 'off', 'off', 'off'], 1),
+      id: 0,
+      indexFn: (idx) => updateActive(0, idx),
     },
     {
       label: 'hat',
       sound: ['hat'],
       duration: [1],
-      status: ['on', 'off', 'off', 'on', 'off', 'off', 'on', 'off', 'off',  ],
+      status: xx(['on', 'off', 'off'], 3).slice(0, 7),
+      id: 1,
+      indexFn: (idx) => updateActive(1, idx),
     },
     {
       label: 'kick',
       sound: ['kick'],
       duration: [1],
-      status: ['on', 'off', 'off', 'off', 'off', 'off', 'off', 'off'],
+      status: xx(['on', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off'], 1),
+      id: 2,
+      indexFn: (idx) => updateActive(2, idx),
     },
   ];
+
   const [parts, setParts] = useState(initialParts);
+  const [actives, setActives] = useState(Object.fromEntries(parts.map(part => [part.id, 0])));
+
 
   useEffect(() => {
     initialParts.forEach(part => {
@@ -37,7 +52,7 @@ const App = (props) => {
     });
   }, []);
 
-  window.part = interpretPart(parts[0]);
+  // window.part = interpretPart(parts[0]);
 
   const toggle = (arr, index) => arr[index] = arr[index] === 'on' ? 'off' : 'on';
 
@@ -53,15 +68,23 @@ const App = (props) => {
     scheduler.click();
   }
 
+
   return (
     <div id="app">
       <button className="button" onClick={buttonClick}>PLAY</button>
-      <div className="grids">
+      <div className="grids draggable"
+        onMouseDown={(e) => console.log('MOUSEDOWN', e.target.className)}
+      >
         {parts.map((part, idx) => (
-          <HorizontalGrid key={idx} label={part.label} status={part.status} update={updatePart(idx)} />
+          <HorizontalGrid
+            key={idx}
+            label={part.label}
+            status={part.status}
+            update={updatePart(idx)}
+            active={actives[part.id]}
+          />
         ))}
       </div>
-      <Line coords={[205, 205, 857, 403]} />
     </div>
   );
 };

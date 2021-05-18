@@ -8,7 +8,7 @@ class Scheduler {
     this.bpm = 480;
     this.parts = [];
     this.eventLoopPeriod = 50; // ms
-    this.eventBufferSize = 200; // ms
+    this.eventBufferSize = 100; // ms
     this.warmupTime = 100; // ms offset at start to allow first notes to play;
     this.playing = false;
     this.id = Math.floor(Math.random() * 1e8);
@@ -52,8 +52,8 @@ class Scheduler {
     document.querySelector('.button').textContent = 'PLAY';
   }
 
-  now() {
-    return this.audioCtx.currentTime - this.startTime ;
+  _now() {
+    return this.audioCtx.currentTime - this.startTime;
   }
 
   _getEventsInWindow(startTime, endTime) {
@@ -77,28 +77,26 @@ class Scheduler {
   }
 
   _eventLoop() {
-    // console.log('event loop');
     const startRealTime = this.lastEventWindowEnd;
-    const endRealTime = this.now() + this.eventBufferSize / 1000;
+    const endRealTime = this._now() + this.eventBufferSize / 1000;
     const startMusicTime = this._realTimeToMusicTime(startRealTime);
     const endMusicTime = this._realTimeToMusicTime(endRealTime);
-
-    // console.log('event loop', this.now(), this.startTime, startRealTime, endRealTime, startMusicTime, endMusicTime, this.audioCtx);
-
     const events = this._getEventsInWindow(startMusicTime, endMusicTime);
-    events.forEach(({ time, status, sound }) => {
-      if (status === 'off') {
-        return;
-      }
+    events.forEach(({ time, status, sound, indexFn }) => {
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
-      // console.log(eventTime);
-      if (eventTime > this.now()) {
-        if (true || sound === 'kick' || sound === 'snare') {
-          console.log('play', time / 4, eventTime * this.bpm / 240, sound);
+
+      if (indexFn) {
+        const delay = (eventTime - this._now()) * 1000;
+        const visualOffset = 25;
+        setTimeout(indexFn, delay + visualOffset);
+      }
+
+      if (status === 'on') {
+        if (eventTime > this._now()) {
+          playSound(sound, eventTime + this.startTime, 1, 1);
+        } else {
+          console.warn('Dropped note:', sound, time, eventTime);
         }
-        playSound(sound, eventTime + this.startTime, 1, 1);
-      } else {
-        console.log('Dropped note:', sound, time, eventTime);
       }
     });
     this.lastEventWindowEnd = endRealTime;

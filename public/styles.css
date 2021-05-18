@@ -1,5 +1,13 @@
-div {
+body {
+  background-color: #aaa;
+}
+
+.draggable {
   box-sizing: border-box;
+}
+
+.draggable.content {
+  box-sizing: revert;
 }
 
 .grids {
@@ -11,6 +19,7 @@ div {
   padding: 5px;
   border: 1px solid #888;
   border-radius: 5px;
+  cursor:all-scroll;
 }
 
 .horizontal-grid-label {
@@ -28,10 +37,12 @@ div {
   margin: 3px;
   border: 1px solid #888;
   border-radius: 8px;
+  opacity: 1;
+  transition: .1s;
 }
 
 .grid-cell-on {
-  background-color:orangered;
+  background-color:#0a0;
 }
 
 .grid-cell-off {
@@ -39,7 +50,9 @@ div {
 }
 
 .grid-cell-active {
-  box-shadow: 0 0 3px 2px gold;
+  /* box-shadow: 0 0 3px 2px blueviolet; */
+  background-color: #0d0;
+  transition: 0s;
 }
 
 .line {
