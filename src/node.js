@@ -4,6 +4,7 @@ import nodeDefaults from './nodedefaults.js';
 class Node {
   constructor({ times, jsonData } = {}) {
     this._parent = null;
+    this._children = [];
     this._aspects = nodeDefaults();
     if (times) {
       this._aspects.times = times;
@@ -15,8 +16,12 @@ class Node {
   }
 
   setParent(parent) {
-    // Can be set to null.
     this._parent = parent;
+    parent.addChild(this);
+  }
+
+  addChild(child) {
+    this._children.push(child);
   }
 
   setSounding(sounding) {
@@ -34,9 +39,11 @@ class Node {
     }
   }
 
-
   updateIn(aspect, index, fn) {
     this._aspects[aspect][index] = fn(this._aspects[aspect][index]);
+    if (aspect === 'times') {
+      this._setAbsoluteTimes();
+    }
   }
 
   _setAbsoluteTimes() {
@@ -50,6 +57,10 @@ class Node {
     let time = this._timePeriod * Math.floor(index / this._absoluteTimes.length);
     time += this._absoluteTimes[index % this._absoluteTimes.length];
     return time;
+  }
+
+  _resetTimeCache() {
+    this._timeCache = [];
   }
 
   _extendTimeCache(endTime) {

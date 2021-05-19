@@ -10,7 +10,6 @@ const HitsGrid = ({ label, node }) => {
       status={node._aspects.statuses}
       update={i => {
         node.updateIn('statuses', i, toggle);
-        console.log(node._absoluteTimes);
       }}
       active={-1}
     />

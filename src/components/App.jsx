@@ -13,14 +13,12 @@ import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
 
-const nodes = [new HitsNode(), new Node()];
-nodes[0].set('times', [1, 1, 1, 1]);
-nodes[0].set('statuses', ['on', 'on', 'on', 'on']);
-nodes[0].set('sounds', ['kick']);
+const nodes = [new HitsNode({ length: 8, jsonData: {} }), new Node()];
 nodes[0].setSounding(false);
+window.n = nodes[0];
 
-nodes[1].set('times', [1, 1, 1, 1]);
-nodes[1].set('statuses', ['on', 'on', 'on', 'on']);
+nodes[1].set('times', [1, 1, 1, 1, 1]);
+nodes[1].set('statuses', ['on', 'on', 'on', 'on', 'on']);
 nodes[1].setParent(nodes[0]);
 scheduler.addPart(nodes[0]);
 scheduler.addPart(nodes[1]);
