@@ -3,7 +3,7 @@ import HorizontalGrid from './HorizontalGrid.jsx';
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
-const SoundGrid = ({ label, node, dragging }) => {
+const SoundGrid = ({ label, node, dragging, coords }) => {
   return (
     <HorizontalGrid
       label={label}
@@ -13,6 +13,7 @@ const SoundGrid = ({ label, node, dragging }) => {
         console.log(node._aspects.statuses);
       }}
       active={-1}
+      coords={coords}
     />
   );
 };

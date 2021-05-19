@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-const useDrag = () => {
-  const [coords, setCoords] = useState([500, 500]);
+const useDrag = (startX = 0, startY = 0) => {
+  const [coords, setCoords] = useState([startX, startY]);
   const [dragging, setDragging] = useState(false);
 
   const handleMouseMove = (e) => {

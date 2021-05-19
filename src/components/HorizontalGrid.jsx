@@ -3,8 +3,8 @@ import useDrag from '../usedrag.js';
 import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
-const HorizontalGrid = ({ status, update, label, active }) => {
-  const [x, y, startDrag] = useDrag();
+const HorizontalGrid = ({ status, update, label, active, coords }) => {
+  const [x, y, startDrag] = useDrag(...coords);
 
   return (
     <div
