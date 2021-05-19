@@ -19,26 +19,26 @@ nodes.push(new RatioNode({ timeStr: '1 : 1' }));
 nodes[0].setSounding(false);
 
 nodes.push(new Node());
-nodes[1].set('times', [1, 1, 1,]);
-nodes[1].set('statuses', ['on', 'on', 'on', ]);
+nodes[1].set('times', [1, 1, 1, 1]);
+nodes[1].set('statuses', ['off', 'off', 'off', 'off']);
 nodes[1].set('sounds', ['ride']);
 nodes[1].setParent(nodes[0]);
 
 nodes.push(new Node());
-nodes[2].set('times', [1, 1, 1, 1]);
-nodes[2].set('statuses', ['on', 'on', 'on', 'on']);
+nodes[2].set('times', [1, 1, 1, 1, 1]);
+nodes[2].set('statuses', ['off', 'off', 'off', 'off', 'off']);
 nodes[2].set('sounds', ['kick']);
 nodes[2].setParent(nodes[0]);
 
 nodes.push(new Node());
-nodes[3].set('times', [1, 1, 1]);
-nodes[3].set('statuses', ['on', 'on', 'on']);
+nodes[3].set('times', [1, 1, 1, 1]);
+nodes[3].set('statuses', ['off', 'off', 'off', 'off']);
 nodes[3].set('sounds', ['hat']);
 nodes[3].setParent(nodes[0]);
 
 nodes.push(new Node());
-nodes[4].set('times', [1, 1, 1, 1]);
-nodes[4].set('statuses', ['on', 'on', 'on', 'on']);
+nodes[4].set('times', [1, 1, 1, 1, 1]);
+nodes[4].set('statuses', ['off', 'off', 'off', 'off', 'off']);
 nodes[4].set('sounds', ['sidestick-2']);
 nodes[4].setParent(nodes[0]);
 

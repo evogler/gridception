@@ -8,7 +8,7 @@ class Scheduler {
     this.bpm = 480;
     this.parts = [];
     this.eventLoopPeriod = 50; // ms
-    this.eventBufferSize = 100; // ms
+    this.eventBufferSize = 200; // ms
     this.warmupTime = 100; // ms offset at start to allow first notes to play;
     this.playing = false;
     this.id = Math.floor(Math.random() * 1e8);
