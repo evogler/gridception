@@ -23,7 +23,7 @@ const useDrag = () => {
     document.addEventListener('mousemove', handleMouseMove, false);
   };
 
-  return [coords, startDrag];
+  return [ ...coords, startDrag];
 }
 
 export default useDrag;

@@ -1,43 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import useDrag from '../usedrag.js';
+import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
 const HorizontalGrid = ({ status, update, label, active }) => {
-  // const [coords, setCoords] = useState([500, 500]);
-
-  // const [dragging, setDragging] = useState(false);
-
-  // const handleMouseMove = (e) => {
-  //   console.log(dragging);
-  //   const xOffset = 25;
-  //   const yOffset = 25;
-  //   setCoords([e.clientX - xOffset, e.clientY - yOffset]);
-  // }
-
-  // const handleMouseUp = () => {
-  //   setDragging(false);
-  //   document.removeEventListener('mouseup', handleMouseUp, false);
-  //   document.removeEventListener('mousemove', handleMouseMove, false);
-  // };
-
-  // const startDrag = () => {
-  //   setDragging(true);
-  //   document.addEventListener('mouseup', handleMouseUp, false);
-  //   document.addEventListener('mousemove', handleMouseMove, false);
-  // };
-
-  const [coords, startDrag] = useDrag();
+  const [x, y, startDrag] = useDrag();
 
   return (
     <div
       className="horizontal-grid"
-      style={{ left: coords[0], top: coords[1] }}
+      style={{ left: x, top: y }}
     >
-      <img
-        className="drag-icon undraggable"
-        src="icons/drag.svg"
-        onMouseDown={startDrag}
-      />
+      <DragIcon startDrag={startDrag} />
       <span className="horizontal-grid-label">{label}:</span>
       {status.map((_, i) => (
         <GridCell key={i} index={i} status={status[i]} active={i === active && status[i] === 'on'} click={() => update(i)} />
