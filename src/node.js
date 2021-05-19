@@ -51,6 +51,8 @@ class Node {
     this._absoluteTimes = [0];
     times.forEach(time => this._absoluteTimes.push(this._absoluteTimes.slice(-1)[0] + time));
     this._timePeriod = this._absoluteTimes.pop();
+    this._resetTimeCache();
+    this._children.forEach(ch => ch._resetTimeCache());
   }
 
   _getOwnTime(index) {
@@ -61,6 +63,8 @@ class Node {
 
   _resetTimeCache() {
     this._timeCache = [];
+    this._children.map(ch => ch._resetTimeCache());
+    console.log('reset time cache', this.id);
   }
 
   _extendTimeCache(endTime) {

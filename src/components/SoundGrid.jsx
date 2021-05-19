@@ -6,7 +6,7 @@ const toggle = (x) => x === 'on' ? 'off' : 'on';
 const SoundGrid = ({ label, node }) => {
   return (
     <HorizontalGrid
-      label="time"
+      label={label}
       status={node._aspects.statuses}
       update={i => {
         node.updateIn('statuses', i, toggle);

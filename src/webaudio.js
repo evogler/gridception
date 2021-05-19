@@ -4,7 +4,7 @@ const drums = [
   'hat',
   'sidestick-2',
   // 'ride-bell',
-  // 'ride'
+  'ride'
 ];
 
 const sampleLags = {
@@ -13,7 +13,7 @@ const sampleLags = {
   'hat': 0.0267,
   'sidestick-2': 0.0245,
   // 'ride-bell': 0.0395,
-  // 'ride': 0.0443,
+  'ride': 0.0443,
 };
 
 const drumCodes = {
@@ -22,7 +22,7 @@ const drumCodes = {
   'h': 'hat',
   'd': 'sidestick-2',
   // 'b': 'ride-bell',
-  // 'r': 'ride',
+  'r': 'ride',
 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -65,6 +65,7 @@ const playSound = (fname, startTime = 0, vol = 1, rate = 1) => {
   gain.gain.value = vol;
   bufS.connect(gain);
   gain.connect(audioCtx.destination);
+  startTime -= sampleLags[fname];
   bufS.start(startTime);
   // bufS.start();
   return bufS;
