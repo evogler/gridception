@@ -76,7 +76,7 @@ const App = (props) => {
   scheduler.addTimeListener((time) => setCurrentTime(time));
 
   return (
-    <div id="app">
+    <div id="app" >
       <Header
         buttonClick={buttonClick}
         currentTime={currentTime}
@@ -87,7 +87,7 @@ const App = (props) => {
         <SoundGrid label="ride" node={nodes[1]} />
         <SoundGrid label="hat" node={nodes[3]} />
         <SoundGrid label="stick" node={nodes[4]} />
-        <SoundGrid label="kick" node={nodes[2]} />
+        <SoundGrid label="kick" node={nodes[2]}/>
 
       </div>
     </div>

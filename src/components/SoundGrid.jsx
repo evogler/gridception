@@ -3,7 +3,7 @@ import HorizontalGrid from './HorizontalGrid.jsx';
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
-const SoundGrid = ({ label, node }) => {
+const SoundGrid = ({ label, node, dragging }) => {
   return (
     <HorizontalGrid
       label={label}
@@ -18,4 +18,3 @@ const SoundGrid = ({ label, node }) => {
 };
 
 export default SoundGrid;
-

@@ -29,6 +29,25 @@ button {
   box-sizing: revert;
 }
 
+.undraggable {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+.drag-icon {
+  position: absolute;
+  cursor: grab;
+}
+
+.drag-icon:active {
+  cursor: grabbing;
+}
+
 .grids {
   position: absolute;
   top: 200px;
@@ -62,6 +81,7 @@ button {
 }
 
 .horizontal-grid {
+  position: absolute;
   background-color: #eee;
   border: 1px solid #888;
   padding: 5px 5px 2px 5px;
