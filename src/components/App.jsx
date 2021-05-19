@@ -8,20 +8,15 @@ import Node from '../node.js';
 import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
+
 const nodes = [new Node(), new Node()];
-
 nodes[0].set('times', [1, 1, 2]);
-nodes[0].set('sounds', ['kick']);
-// nodes[0].setSounding(false);
-
+nodes[0].setSounding(false);
 nodes[1].set('times', [1, 1, 1, 1]);
 nodes[1].set('statuses', ['on', 'on', 'on', 'on']);
 nodes[1].setParent(nodes[0]);
-
 scheduler.addPart(nodes[0]);
 scheduler.addPart(nodes[1]);
-
-const xx = (val, count) => [...new Array(count)].fill(val).flat(9);
 
 const App = (props) => {
   const updateActive = (id, val) => {
@@ -54,6 +49,15 @@ const App = (props) => {
         currentTime={currentTime}
       />
       <div className="canvas">
+        <HorizontalGrid
+          label="time"
+          status={nodes[0]._aspects.statuses}
+          update={i => {
+            nodes[0].updateIn('statuses', i, toggle);
+            console.log(nodes[0]._aspects.statuses);
+          }}
+          active={-1}
+        />
         <HorizontalGrid
           label="time"
           status={nodes[1]._aspects.statuses}
