@@ -5,3 +5,6 @@ module.exports.updateArray = (arr, idx, update) => {
 };
 
 module.exports.sum = (arr) => arr.reduce((acc, n) => acc + n, 0);
+
+let nextId = 0;
+module.exports.uniqueId = () => nextId++;

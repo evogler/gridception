@@ -1,14 +1,17 @@
+import { uniqueId } from './util.js';
 import nodeDefaults from './nodedefaults.js';
 
 class Node {
-  constructor({ times, jsonData }) {
+  constructor({ times, jsonData } = {}) {
     this._parent = null;
     this._aspects = nodeDefaults();
     if (times) {
       this._aspects.times = times;
     }
     this._sounding = true;
-    this._eventCache = [];
+    this._timeCache = [];
+    this.id = uniqueId();
+    console.log('Creating new Node', this.id);
   }
 
   setParent(parent) {
@@ -20,11 +23,15 @@ class Node {
     this._sounding = sounding;
   }
 
-  updateAspect(aspect, values) {
+  set(aspect, values) {
     this._aspects[aspect] = values;
     if (aspect === 'times') {
       this._setAbsoluteTimes(values);
     }
+  }
+
+  updateIn(aspect, index, fn) {
+    this._aspects[aspect][index] = fn(this._aspects[aspect][index]);
   }
 
   _setAbsoluteTimes(times) {
@@ -40,23 +47,32 @@ class Node {
   }
 
   _extendTimeCache(endTime) {
-    while (endTime >= (this._eventCache.length - 1)) {
-      let index = this._eventCache.length;
+    while (endTime >= (this._timeCache.length - 1)) {
+      let index = this._timeCache.length;
       let newTime = this._getOwnTime(index);
       if (this._parent) {
         newTime = this._parent.getTime(newTime);
       }
-      this._eventCache.push(newTime);
+      this._timeCache.push(newTime);
     }
+  }
+
+  _getAspectsAtIndex(index, aspects) {
+    const res = {};
+    for (const aspect in this._aspects) {
+      const arr = this._aspects[aspect];
+      res[aspect] = arr[index % arr.length];
+    }
+    return res;
   }
 
   getTime(time) {
     this._extendTimeCache(time);
     if (time % 1 === 0) {
-      return this._eventCache[Math.floor(time)];
+      return this._timeCache[Math.floor(time)];
     }
-    let t0 = this._eventCache[Math.floor(time)];
-    let t1 = this._eventCache[Math.ceil(time)];
+    let t0 = this._timeCache[Math.floor(time)];
+    let t1 = this._timeCache[Math.ceil(time)];
     let weight = time % 1;
     return weight * t1 + (1 - weight) * t0;
   }
@@ -74,6 +90,7 @@ class Node {
       res.unshift(event);
       i -= 1;
     }
+    // console.log('Node.GEITW', this.id, startTime, endTime, res);
     return res;
   }
 }

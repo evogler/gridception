@@ -8,6 +8,18 @@ import Node from '../node.js';
 import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
+const nodes = [new Node(), new Node()];
+
+nodes[0].set('times', [1, 1, 2]);
+nodes[0].set('sounds', ['kick']);
+// nodes[0].setSounding(false);
+
+nodes[1].set('times', [1, 1, 1, 1]);
+nodes[1].set('statuses', ['on', 'on', 'on', 'on']);
+nodes[1].setParent(nodes[0]);
+
+scheduler.addPart(nodes[0]);
+scheduler.addPart(nodes[1]);
 
 const xx = (val, count) => [...new Array(count)].fill(val).flat(9);
 
@@ -16,46 +28,10 @@ const App = (props) => {
     setActives(acts => ({ ...acts, [id]: val }));
   }
 
-  const initialParts = [
-    {
-      label: 'stick',
-      sound: ['sidestick-2'],
-      duration: [1],
-      status: xx(['off', 'off', 'off', 'off', 'off', 'off', 'on', 'off', 'off', 'off', 'off', 'off'], 1),
-      id: 0,
-      indexFn: (idx) => updateActive(0, idx),
-    },
-    {
-      label: 'hat',
-      duration: [1],
-      status: xx(['on', 'off', 'off'], 3).slice(0, 7),
-      id: 1,
-      indexFn: (idx) => updateActive(1, idx),
-    },
-    {
-      label: 'kick',
-      sound: ['kick'],
-      duration: [1],
-      status: xx(['on', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off', 'off'], 1),
-      id: 2,
-      indexFn: (idx) => updateActive(2, idx),
-    },
-  ];
-
-  const [parts, setParts] = useState(initialParts);
-  const [actives, setActives] = useState(Object.fromEntries(parts.map(part => [part.id, 0])));
+  const [actives, setActives] = useState(Object.fromEntries(nodes.map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
 
-  useEffect(() => {
-    initialParts.forEach(part => {
-      const partFn = interpretPart(part);
-      scheduler.addPart(partFn);
-    });
-  }, []);
-
-  // window.part = interpretPart(parts[0]);
-
-  const toggle = (arr, index) => arr[index] = arr[index] === 'on' ? 'off' : 'on';
+  const toggle = (x) => x === 'on' ? 'off' : 'on';
 
   const updatePart = partIndex => index => {
     console.log(partIndex, index);
@@ -77,10 +53,18 @@ const App = (props) => {
         buttonClick={buttonClick}
         currentTime={currentTime}
       />
-      <div className="grids draggable"
-        onMouseDown={(e) => console.log('MOUSEDOWN', e.target.className)}
-      >
-        {parts.map((part, idx) => (
+      <div className="canvas">
+        <HorizontalGrid
+          label="time"
+          status={nodes[1]._aspects.statuses}
+          update={i => {
+            nodes[1].updateIn('statuses', i, toggle);
+            console.log(nodes[1]._aspects.statuses);
+          }}
+          active={-1}
+        />
+
+        {/* {parts.map((part, idx) => (
           <HorizontalGrid
             key={idx}
             label={part.label}
@@ -88,7 +72,7 @@ const App = (props) => {
             update={updatePart(idx)}
             active={actives[part.id]}
           />
-        ))}
+        ))} */}
       </div>
     </div>
   );

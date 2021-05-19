@@ -77,10 +77,11 @@ class Scheduler {
   _getEventsInWindow(startTime, endTime) {
     const events = [];
     for (const part of this.parts) {
-      for (event of part(startTime, endTime)) {
+      for (event of part.getEventsInTimeWindow(startTime, endTime)) {
         events.push(event);
       }
     }
+    // console.log('events', events);
     return events;
   }
 
@@ -100,13 +101,20 @@ class Scheduler {
     const startMusicTime = this._realTimeToMusicTime(startRealTime);
     const endMusicTime = this._realTimeToMusicTime(endRealTime);
     const events = this._getEventsInWindow(startMusicTime, endMusicTime);
-    events.forEach(({ time, status, sound, indexFn }) => {
+    // console.log('startMusicTime', startMusicTime, 'endMusicTime', endMusicTime);
+    // console.log('events', events);
+    events.forEach((e) => {
+      // { time, status, sound, indexFn }
+      const time = e.time;
+      const status = e.statuses;
+      const sound = e.sounds;
+      const callback = e.callbacks;
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
-      if (indexFn) {
+      if (callback) {
         const delay = (eventTime - this._now()) * 1000;
         const visualOffset = 25;
-        setTimeout(indexFn, delay + visualOffset);
+        setTimeout(callback, delay + visualOffset);
       }
 
       if (status === 'on') {
