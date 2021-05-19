@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
+import SoundGrid from './SoundGrid.jsx';
+import HitsGrid from './HitsGrid.jsx';
 import Header from './Header.jsx';
 import Line from './Line.jsx';
 import { updateArray } from '../util.js';
 import interpretPart from '../interpreter.js';
 import Node from '../node.js';
+import RatioNode from '../rationode.js';
+import HitsNode from '../hitsnode.js';
 import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
 
-const nodes = [new Node(), new Node()];
-nodes[0].set('times', [1, 1, 2]);
+const nodes = [new HitsNode(), new Node()];
+nodes[0].set('times', [1, 1, 1, 1]);
+nodes[0].set('statuses', ['on', 'on', 'on', 'on']);
+nodes[0].set('sounds', ['kick']);
 nodes[0].setSounding(false);
+
 nodes[1].set('times', [1, 1, 1, 1]);
 nodes[1].set('statuses', ['on', 'on', 'on', 'on']);
 nodes[1].setParent(nodes[0]);
@@ -25,8 +32,6 @@ const App = (props) => {
 
   const [actives, setActives] = useState(Object.fromEntries(nodes.map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
-
-  const toggle = (x) => x === 'on' ? 'off' : 'on';
 
   const updatePart = partIndex => index => {
     console.log(partIndex, index);
@@ -49,34 +54,15 @@ const App = (props) => {
         currentTime={currentTime}
       />
       <div className="canvas">
-        <HorizontalGrid
+        <HitsGrid
           label="time"
-          status={nodes[0]._aspects.statuses}
-          update={i => {
-            nodes[0].updateIn('statuses', i, toggle);
-            console.log(nodes[0]._aspects.statuses);
-          }}
-          active={-1}
+          node={nodes[0]}
         />
-        <HorizontalGrid
-          label="time"
-          status={nodes[1]._aspects.statuses}
-          update={i => {
-            nodes[1].updateIn('statuses', i, toggle);
-            console.log(nodes[1]._aspects.statuses);
-          }}
-          active={-1}
+        <SoundGrid
+          label="stick"
+          node={nodes[1]}
         />
 
-        {/* {parts.map((part, idx) => (
-          <HorizontalGrid
-            key={idx}
-            label={part.label}
-            status={part.status}
-            update={updatePart(idx)}
-            active={actives[part.id]}
-          />
-        ))} */}
       </div>
     </div>
   );

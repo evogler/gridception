@@ -78,6 +78,7 @@ class Scheduler {
     const events = [];
     for (const part of this.parts) {
       for (event of part.getEventsInTimeWindow(startTime, endTime)) {
+        event.sounding = part.sounding;
         events.push(event);
       }
     }
@@ -108,6 +109,7 @@ class Scheduler {
       const time = e.time;
       const status = e.statuses;
       const sound = e.sounds;
+      const sounding = e.sounding;
       const callback = e.callbacks;
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
@@ -117,7 +119,7 @@ class Scheduler {
         setTimeout(callback, delay + visualOffset);
       }
 
-      if (status === 'on') {
+      if (status === 'on' && sounding) {
         if (eventTime > this._now()) {
           playSound(sound, eventTime + this.startTime, 1, 1);
         } else {

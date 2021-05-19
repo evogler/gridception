@@ -23,18 +23,24 @@ class Node {
     this._sounding = sounding;
   }
 
+  get sounding() {
+    return this._sounding;
+  }
+
   set(aspect, values) {
     this._aspects[aspect] = values;
     if (aspect === 'times') {
-      this._setAbsoluteTimes(values);
+      this._setAbsoluteTimes();
     }
   }
+
 
   updateIn(aspect, index, fn) {
     this._aspects[aspect][index] = fn(this._aspects[aspect][index]);
   }
 
-  _setAbsoluteTimes(times) {
+  _setAbsoluteTimes() {
+    const times = this._aspects.times;
     this._absoluteTimes = [0];
     times.forEach(time => this._absoluteTimes.push(this._absoluteTimes.slice(-1)[0] + time));
     this._timePeriod = this._absoluteTimes.pop();
