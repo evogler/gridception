@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import useDrag from '../usedrag.js';
 import GridCell from './GridCell.jsx';
 
 const HorizontalGrid = ({ status, update, label, active }) => {
-  const [coords, setCoords] = useState([500, 500]);
-  const [dragging, setDragging] = useState(false);
+  // const [coords, setCoords] = useState([500, 500]);
 
-  const handleMouseMove = (e) => {
-    console.log(dragging);
-    const xOffset = 25;
-    const yOffset = 25;
-    setCoords([e.clientX - xOffset, e.clientY - yOffset]);
-  }
+  // const [dragging, setDragging] = useState(false);
 
-  const handleMouseUp = () => {
-    setDragging(false);
-    document.removeEventListener('mouseup', handleMouseUp, false);
-    document.removeEventListener('mousemove', handleMouseMove, false);
-  };
+  // const handleMouseMove = (e) => {
+  //   console.log(dragging);
+  //   const xOffset = 25;
+  //   const yOffset = 25;
+  //   setCoords([e.clientX - xOffset, e.clientY - yOffset]);
+  // }
 
-  const startDrag = () => {
-    setDragging(true);
-    document.addEventListener('mouseup', handleMouseUp, false);
-    document.addEventListener('mousemove', handleMouseMove, false);
-  };
+  // const handleMouseUp = () => {
+  //   setDragging(false);
+  //   document.removeEventListener('mouseup', handleMouseUp, false);
+  //   document.removeEventListener('mousemove', handleMouseMove, false);
+  // };
+
+  // const startDrag = () => {
+  //   setDragging(true);
+  //   document.addEventListener('mouseup', handleMouseUp, false);
+  //   document.addEventListener('mousemove', handleMouseMove, false);
+  // };
+
+  const [coords, startDrag] = useDrag();
 
   return (
     <div
