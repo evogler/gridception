@@ -14,17 +14,56 @@ import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
 
-const nodes = [];
-nodes.push(new RatioNode({ timeStr: '1 : 1' }));
-nodes[0].setSounding(false);
+const jsonStr = `[{"id":0,"aspects":{"times":[1.334, 0.666],"sounds":["sidestick-2"],"volumes":[1],"rates":[1],"statuses":["on"]},"parent":5,"children":[1,2,3,4],"sounding":false,"coords":[100,200],"text":"2 : 2 1","type":"ratioNode"},{"id":1,"aspects":{"times":[1,1,1,1],"sounds":["ride"],"volumes":[1],"rates":[1],"statuses":["on","off","on","on"]},"parent":0,"children":[],"sounding":true,"coords":[430,113],"type":"node"},{"id":2,"aspects":{"times":[1,1,1,1,1],"sounds":["kick"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,375],"type":"node"},{"id":3,"aspects":{"times":[1,1,1,1],"sounds":["hat"],"volumes":[1],"rates":[1],"statuses":["off","off","on","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,203],"type":"node"},{"id":4,"aspects":{"times":[1,1,1,1,1],"sounds":["sidestick-2"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[431,288],"type":"node"},{"id":5,"aspects":{"times":[1],"sounds":["sidestick-2"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[0],"sounding":false,"coords":[100,100],"text":"1 : 1","type":"ratioNode"}]`;
 
-nodes.push(new Node());
-nodes[1].set('times', [1, 1, 1, 1]);
-nodes[1].set('statuses', ['off', 'off', 'off', 'off']);
-nodes[1].set('sounds', ['ride']);
-nodes[1].setParent(nodes[0]);
+const jsonData = JSON.parse(jsonStr);
 
-nodes.push(new Node());
+// console.log('json', jsonData);
+
+const nodes = {};
+
+// const nodesFromJson =
+
+for (const json of jsonData) {
+  console.log(json);
+  if (json.type === 'node') {
+    const n = new Node({ jsonData: json });
+    nodes[json.id] = n;
+    scheduler.addPart(n);
+  } else if (json.type === 'ratioNode') {
+    console.log('ratioNode');
+    const n = new RatioNode({ jsonData: json });
+    nodes[json.id] = n;
+    scheduler.addPart(n);
+  }
+}
+
+for (const node of Object.values(nodes)) {
+  if (Number.isInteger(node._parent)) {
+    node._parent = nodes[node._parent];
+  }
+  node._children = node._children.map(ch => nodes[ch]);
+}
+
+for (const node of Object.values(nodes)) {
+  node._setAbsoluteTimes();
+}
+
+
+window.nodes = nodes;
+
+
+
+// nodes.push(new RatioNode({ timeStr: '1 : 1' }));
+// nodes[0].setSounding(false);
+
+// nodes.push(new Node());
+// nodes[1].set('times', [1, 1, 1, 1]);
+// nodes[1].set('statuses', ['off', 'off', 'off', 'off']);
+// nodes[1].set('sounds', ['ride']);
+// nodes[1].setParent(nodes[0]);
+
+/* nodes.push(new Node());
 nodes[2].set('times', [1, 1, 1, 1, 1]);
 nodes[2].set('statuses', ['off', 'off', 'off', 'off', 'off']);
 nodes[2].set('sounds', ['kick']);
@@ -44,21 +83,21 @@ nodes[4].setParent(nodes[0]);
 
 nodes.push(new RatioNode({ timeStr: '1 : 1'}));
 nodes[5].setSounding(false);
-nodes[0].setParent(nodes[5]);
+nodes[0].setParent(nodes[5]); */
 
-scheduler.addPart(nodes[0]);
-scheduler.addPart(nodes[1]);
-scheduler.addPart(nodes[2]);
-scheduler.addPart(nodes[3]);
-scheduler.addPart(nodes[4]);
-scheduler.addPart(nodes[5]);
+// scheduler.addPart(nodes[0]);
+// scheduler.addPart(nodes[1]);
+// scheduler.addPart(nodes[2]);
+// scheduler.addPart(nodes[3]);
+// scheduler.addPart(nodes[4]);
+// scheduler.addPart(nodes[5]);
 
 const App = (props) => {
   const updateActive = (id, val) => {
     setActives(acts => ({ ...acts, [id]: val }));
   }
 
-  const [actives, setActives] = useState(Object.fromEntries(nodes.map(node => [node.id, 1])));
+  const [actives, setActives] = useState(Object.fromEntries(Object.values(nodes).map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
 
   const updatePart = partIndex => index => {
@@ -77,7 +116,8 @@ const App = (props) => {
 
 
   const save = () => {
-    nodes.forEach(node => console.log(node.toJson()));
+    const json = nodes.map(node => node.toJson());
+    console.log(JSON.stringify(json));
   }
 
   return (

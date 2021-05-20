@@ -6,6 +6,7 @@ import GridCell from './GridCell.jsx';
 const HorizontalGrid = ({ status, update, label, node, active,
   startCoords, lengthen, shorten, mute }) => {
 
+  startCoords = node._coords ? node._coords : startCoords;
   const [x, y, drag] = useDrag(...startCoords, node);
 
   const [muted, setMuted] = useState(false);

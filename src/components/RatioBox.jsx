@@ -5,6 +5,7 @@ import DragIcon from './DragIcon.jsx';
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
 const RatioBox = ({ label, node, coords = [0, 0] }) => {
+  coords = node._coords ? node._coords : coords;
   const [x, y, drag] = useDrag(...coords, node);
   return (
     <div className="ratio-box" style={{ left: x, top: y }} >
@@ -16,7 +17,7 @@ const RatioBox = ({ label, node, coords = [0, 0] }) => {
           console.log(e.target.value);
         }}
       >
-        1 : 1
+        {node._text}
       </textarea>
     </div>
   );

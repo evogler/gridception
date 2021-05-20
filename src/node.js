@@ -4,11 +4,12 @@ import nodeDefaults from './nodedefaults.js';
 class Node {
   constructor({ times, jsonData } = {}) {
     if (jsonData) {
-       const { id, aspects, parent, children, sounding } = jsonData;
+       const { id, aspects, parent, children, sounding, coords } = jsonData;
        this._parent = parent;
        this._children = children;
        this._aspects = aspects;
        this._sounding = sounding;
+       this._coords = coords;
        this.id = id;
        return;
     }
@@ -26,14 +27,15 @@ class Node {
   }
 
   toJson() {
-    return JSON.stringify({
+    return {
       id: this.id,
       aspects: this._aspects,
       parent: this._parent?.id,
       children: this._children.map(ch => ch.id),
       sounding: this._sounding,
       coords: this._coords,
-    })
+      type: 'node',
+    };
   }
 
   setParent(parent) {
@@ -91,12 +93,16 @@ class Node {
   }
 
   _getOwnTime(index) {
+    if (!this._absoluteTimes) {
+      this._setAbsoluteTimes();
+    }
     let time = this._timePeriod * Math.floor(index / this._absoluteTimes.length);
     time += this._absoluteTimes[index % this._absoluteTimes.length];
     return time;
   }
 
   _resetTimeCache() {
+    // console.log('resetTimeCache', this.id);
     this._timeCache = [];
     this._children.map(ch => ch._resetTimeCache());
     // console.log('reset time cache', this.id);
