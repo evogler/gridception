@@ -3,7 +3,7 @@ import HorizontalGrid from './HorizontalGrid.jsx';
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
-const SoundGrid = ({ label, node, coords, setCoords }) => {
+const SoundGrid = ({ label, node, coords }) => {
   return (
     <HorizontalGrid
       label={label}
@@ -12,10 +12,9 @@ const SoundGrid = ({ label, node, coords, setCoords }) => {
         node.updateIn('statuses', i, toggle);
         console.log(node._aspects.statuses);
       }}
-      setCoords={setCoords}
+      node={node}
       active={-1}
-      coords={coords}
-      setCoords={setCoords}
+      startCoords={coords}
       lengthen={node.lengthen.bind(node)}
       shorten={node.shorten.bind(node)}
       mute={() => node.setSounding(!node.sounding)}

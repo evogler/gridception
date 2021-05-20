@@ -34,7 +34,7 @@ const sampleFolder = '/public/samples/';
 
 const onDecode = (buffer, fname) => {
   buffers[fname] = buffer;
-  console.log('loaded', fname);
+  // console.log('loaded', fname);
 };
 
 const onMp3Load = (req, fname) => {

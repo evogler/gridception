@@ -22,7 +22,7 @@ class Node {
     this._sounding = true;
     this._timeCache = [];
     this.id = uniqueId();
-    console.log('Creating new Node', this.id);
+    // console.log('Creating new Node', this.id);
   }
 
   toJson() {
@@ -32,6 +32,7 @@ class Node {
       parent: this._parent?.id,
       children: this._children.map(ch => ch.id),
       sounding: this._sounding,
+      coords: this._coords,
     })
   }
 
@@ -98,7 +99,7 @@ class Node {
   _resetTimeCache() {
     this._timeCache = [];
     this._children.map(ch => ch._resetTimeCache());
-    console.log('reset time cache', this.id);
+    // console.log('reset time cache', this.id);
   }
 
   _extendTimeCache(endTime) {

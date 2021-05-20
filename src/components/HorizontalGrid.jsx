@@ -3,17 +3,19 @@ import useDrag from '../usedrag.js';
 import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
-const HorizontalGrid = ({ status, update, label, setCoords, active, coords, lengthen, shorten, mute }) => {
+const HorizontalGrid = ({ status, update, label, node, active, startCoords, lengthen, shorten, mute }) => {
 
-
-  // const [coords, setCoords] = useState([startX, startY]);
+  const [coords, setCoords] = useState(startCoords);
   const [dragging, setDragging] = useState(false);
 
   const handleMouseMove = (e) => {
-    console.log(dragging);
+    // console.log(dragging);
     const xOffset = 25;
     const yOffset = 25;
-    setCoords([e.clientX - xOffset, e.clientY - yOffset]);
+    const x = e.clientX - xOffset;
+    const y = e.clientY - yOffset;
+    setCoords([x, y]);
+    node._coords = [x, y];
   }
 
   const handleMouseUp = () => {
