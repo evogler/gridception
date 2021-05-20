@@ -3,6 +3,16 @@ import nodeDefaults from './nodedefaults.js';
 
 class Node {
   constructor({ times, jsonData } = {}) {
+    if (jsonData) {
+       const { id, aspects, parent, children, sounding } = jsonData;
+       this._parent = parent;
+       this._children = children;
+       this._aspects = aspects;
+       this._sounding = sounding;
+       this.id = id;
+       return;
+    }
+
     this._parent = null;
     this._children = [];
     this._aspects = nodeDefaults();
@@ -13,6 +23,16 @@ class Node {
     this._timeCache = [];
     this.id = uniqueId();
     console.log('Creating new Node', this.id);
+  }
+
+  toJson() {
+    return JSON.stringify({
+      id: this.id,
+      aspects: this._aspects,
+      parent: this._parent?.id,
+      children: this._children.map(ch => ch.id),
+      sounding: this._sounding,
+    })
   }
 
   setParent(parent) {
@@ -43,6 +63,20 @@ class Node {
     this._aspects[aspect][index] = fn(this._aspects[aspect][index]);
     if (aspect === 'times') {
       this._setAbsoluteTimes();
+    }
+  }
+
+  lengthen() {
+    this._aspects.times.push(this._aspects.times.slice(-1)[0]);
+    this._aspects.statuses.push('off');
+  }
+
+  shorten() {
+    if (this._aspects.times.length > 1) {
+      this._aspects.times.pop();
+    }
+    if (this._aspects.statuses.length > 1) {
+      this._aspects.statuses.pop();
     }
   }
 

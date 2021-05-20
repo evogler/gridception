@@ -48,6 +48,10 @@ button {
   cursor: grabbing;
 }
 
+.muted {
+  opacity: .5;
+}
+
 .grids {
   position: absolute;
   top: 200px;

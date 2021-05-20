@@ -75,19 +75,27 @@ const App = (props) => {
 
   scheduler.addTimeListener((time) => setCurrentTime(time));
 
+  const [coords, setCoords] = useState([400, 300]);
+
+  const save = () => {
+    // console.log(nodes[1].toJson());
+    console.log(coords);
+  }
+
   return (
     <div id="app" >
       <Header
         buttonClick={buttonClick}
         currentTime={currentTime}
+        save={save}
       />
       <div className="canvas">
         <RatioBox label="grid 1" node={nodes[5]} coords={[100, 100]} />
         <RatioBox label="grid 2" node={nodes[0]} coords={[100, 200]}/>
-        <SoundGrid label="ride" node={nodes[1]} coords={[400, 300]}/>
-        <SoundGrid label="hat" node={nodes[3]}  coords={[400, 400]}/>
-        <SoundGrid label="stick" node={nodes[4]} coords={[400, 500]}/>
-        <SoundGrid label="kick" node={nodes[2]} coords={[400, 600]}/>
+        <SoundGrid label="ride" node={nodes[1]} coords={coords} setCoords={setCoords} />
+        {/* <SoundGrid label="hat" node={nodes[3]}  coords={[400, 400]}/> */}
+        {/* <SoundGrid label="stick" node={nodes[4]} coords={[400, 500]}/> */}
+        {/* <SoundGrid label="kick" node={nodes[2]} coords={[400, 600]}/> */}
 
       </div>
     </div>
