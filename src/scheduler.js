@@ -20,6 +20,11 @@ class Scheduler {
     this.parts.push(part);
   }
 
+  reset() {
+    this.parts = [];
+    this.timeListeners = [];
+  }
+
   setBpm(bpm) {
     this.bpm = bpm;
   }

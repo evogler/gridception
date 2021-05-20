@@ -12,7 +12,7 @@ const SoundGrid = ({ label, node, coords }) => {
         node.updateIn('statuses', i, toggle);
       }}
       node={node}
-      active={-1}
+      active={1}
       startCoords={coords}
       lengthen={node.lengthen.bind(node)}
       shorten={node.shorten.bind(node)}

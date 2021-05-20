@@ -20,77 +20,41 @@ const jsonData = JSON.parse(jsonStr);
 
 // console.log('json', jsonData);
 
-const nodes = {};
+const loadFromJson = (jsonData) => {
+  const nodes = {};
 
-// const nodesFromJson =
+  scheduler.reset();
 
-for (const json of jsonData) {
-  console.log(json);
-  if (json.type === 'node') {
-    const n = new Node({ jsonData: json });
-    nodes[json.id] = n;
-    scheduler.addPart(n);
-  } else if (json.type === 'ratioNode') {
-    console.log('ratioNode');
-    const n = new RatioNode({ jsonData: json });
-    nodes[json.id] = n;
-    scheduler.addPart(n);
+  for (const json of jsonData) {
+    if (json.type === 'node') {
+      const n = new Node({ jsonData: json });
+      nodes[json.id] = n;
+      scheduler.addPart(n);
+    } else if (json.type === 'ratioNode') {
+      console.log('ratioNode');
+      const n = new RatioNode({ jsonData: json });
+      nodes[json.id] = n;
+      scheduler.addPart(n);
+    }
   }
-}
 
-for (const node of Object.values(nodes)) {
-  if (Number.isInteger(node._parent)) {
-    node._parent = nodes[node._parent];
+  for (const node of Object.values(nodes)) {
+    if (Number.isInteger(node._parent)) {
+      node._parent = nodes[node._parent];
+    }
+    node._children = node._children.map(ch => nodes[ch]);
   }
-  node._children = node._children.map(ch => nodes[ch]);
-}
 
-for (const node of Object.values(nodes)) {
-  node._setAbsoluteTimes();
-}
+  for (const node of Object.values(nodes)) {
+    node._setAbsoluteTimes();
+  }
 
+  return nodes;
+};
+
+const nodes = loadFromJson(jsonData);
 
 window.nodes = nodes;
-
-
-
-// nodes.push(new RatioNode({ timeStr: '1 : 1' }));
-// nodes[0].setSounding(false);
-
-// nodes.push(new Node());
-// nodes[1].set('times', [1, 1, 1, 1]);
-// nodes[1].set('statuses', ['off', 'off', 'off', 'off']);
-// nodes[1].set('sounds', ['ride']);
-// nodes[1].setParent(nodes[0]);
-
-/* nodes.push(new Node());
-nodes[2].set('times', [1, 1, 1, 1, 1]);
-nodes[2].set('statuses', ['off', 'off', 'off', 'off', 'off']);
-nodes[2].set('sounds', ['kick']);
-nodes[2].setParent(nodes[0]);
-
-nodes.push(new Node());
-nodes[3].set('times', [1, 1, 1, 1]);
-nodes[3].set('statuses', ['off', 'off', 'off', 'off']);
-nodes[3].set('sounds', ['hat']);
-nodes[3].setParent(nodes[0]);
-
-nodes.push(new Node());
-nodes[4].set('times', [1, 1, 1, 1, 1]);
-nodes[4].set('statuses', ['off', 'off', 'off', 'off', 'off']);
-nodes[4].set('sounds', ['sidestick-2']);
-nodes[4].setParent(nodes[0]);
-
-nodes.push(new RatioNode({ timeStr: '1 : 1'}));
-nodes[5].setSounding(false);
-nodes[0].setParent(nodes[5]); */
-
-// scheduler.addPart(nodes[0]);
-// scheduler.addPart(nodes[1]);
-// scheduler.addPart(nodes[2]);
-// scheduler.addPart(nodes[3]);
-// scheduler.addPart(nodes[4]);
-// scheduler.addPart(nodes[5]);
 
 const App = (props) => {
   const updateActive = (id, val) => {
@@ -128,12 +92,12 @@ const App = (props) => {
         save={save}
       />
       <div className="canvas">
-        <RatioBox label="grid 1" node={nodes[5]} coords={[100, 100]} />
-        <RatioBox label="grid 2" node={nodes[0]} coords={[100, 200]}/>
-        <SoundGrid label="ride" node={nodes[1]} coords={[400, 300]} />
-        <SoundGrid label="hat" node={nodes[3]}  coords={[400, 400]}/>
-        <SoundGrid label="stick" node={nodes[4]} coords={[400, 500]}/>
-        <SoundGrid label="kick" node={nodes[2]} coords={[400, 600]}/>
+        <RatioBox label="grid 1" node={nodes[5]} />
+        <RatioBox label="grid 2" node={nodes[0]} />
+        <SoundGrid label="ride" node={nodes[1]} />
+        <SoundGrid label="hat" node={nodes[3]} />
+        <SoundGrid label="stick" node={nodes[4]} />
+        <SoundGrid label="kick" node={nodes[2]} />
 
       </div>
     </div>
