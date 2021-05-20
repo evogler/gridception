@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
 const SoundGrid = ({ label, node, coords }) => {
+  const [active, setActive] = useState(-1);
+
+  useEffect(() => {
+    node.setActiveListener(setActive);
+  }, []);
+
   return (
     <HorizontalGrid
       label={label}
@@ -12,7 +18,7 @@ const SoundGrid = ({ label, node, coords }) => {
         node.updateIn('statuses', i, toggle);
       }}
       node={node}
-      active={1}
+      active={active}
       startCoords={coords}
       lengthen={node.lengthen.bind(node)}
       shorten={node.shorten.bind(node)}

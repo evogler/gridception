@@ -38,6 +38,10 @@ class Node {
     };
   }
 
+  setActiveListener(listener) {
+    this._activeListener = listener;
+  }
+
   setParent(parent) {
     this._parent = parent;
     parent.addChild(this);
@@ -149,6 +153,12 @@ class Node {
     while (this._timeCache[i] >= startTime && i >= 0) {
       const event = this._getAspectsAtIndex(i, aspects);
       event.time = this._timeCache[i];
+      event.setActive = () => {
+        const activeIdx = (i % this._aspects.statuses.length);
+        if (this._activeListener) {
+          this._activeListener(activeIdx);
+        }
+      };
       res.unshift(event);
       i -= 1;
     }

@@ -9,7 +9,7 @@ class Scheduler {
     this.parts = [];
     this.eventLoopPeriod = 50; // ms
     this.eventBufferSize = 200; // ms
-    this.warmupTime = 100; // ms offset at start to allow first notes to play;
+    this.warmupTime = 115; // ms offset at start to allow first notes to play;
     this.playing = false;
     this.id = Math.floor(Math.random() * 1e8);
     this.timeListeners = [];
@@ -110,19 +110,21 @@ class Scheduler {
     // console.log('startMusicTime', startMusicTime, 'endMusicTime', endMusicTime);
     // console.log('events', events);
     events.forEach((e) => {
-      // { time, status, sound, indexFn }
       const time = e.time;
       const status = e.statuses;
       const sound = e.sounds;
       const sounding = e.sounding;
       const callback = e.callbacks;
+      const setActive = e.setActive;
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
-      if (callback) {
+      if (setActive) {
         const delay = (eventTime - this._now()) * 1000;
-        const visualOffset = 25;
-        setTimeout(callback, delay + visualOffset);
+        const visualOffset = 1;
+        setActive();
+        // setTimeout(setActive, delay + visualOffset);
       }
+
 
       if (status === 'on' && sounding) {
         if (eventTime > this._now()) {

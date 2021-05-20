@@ -57,12 +57,17 @@ const nodes = loadFromJson(jsonData);
 window.nodes = nodes;
 
 const App = (props) => {
-  const updateActive = (id, val) => {
-    setActives(acts => ({ ...acts, [id]: val }));
-  }
 
   const [actives, setActives] = useState(Object.fromEntries(Object.values(nodes).map(node => [node.id, 1])));
+
+  useEffect(() => {
+    console.log(actives);
+  }, []);
   const [currentTime, setCurrentTime] = useState(0);
+
+  const updateActive = id => (id, val) => {
+    setActives(acts => ({ ...acts, [id]: val }));
+  }
 
   const updatePart = partIndex => index => {
     console.log(partIndex, index);

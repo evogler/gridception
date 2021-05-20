@@ -6,6 +6,8 @@ const Header = ({ buttonClick, currentTime, save }) => {
     <div className="header">
       <button className="button" onClick={buttonClick}>PLAY</button>
       <button className="button" onClick={save}>SAVE</button>
+      <button className="button" onClick={null}>LOAD</button>
+
       <span>Beat: {time}</span>
     </div>
   );
