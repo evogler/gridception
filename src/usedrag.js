@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const useDrag = (startX = 0, startY = 0) => {
+const useDrag = (startX = 0, startY = 0, node = null) => {
   const [coords, setCoords] = useState([startX, startY]);
   const [dragging, setDragging] = useState(false);
 
+  useEffect(() => {
+    node._coords = coords;
+  }, []);
+
   const handleMouseMove = (e) => {
-    console.log(dragging);
     const xOffset = 25;
     const yOffset = 25;
-    setCoords([e.clientX - xOffset, e.clientY - yOffset]);
+    const x = e.clientX - xOffset;
+    const y = e.clientY - yOffset;
+    setCoords([x, y]);
+    if (node) {
+      node._coords = [x, y];
+    }
   }
 
   const handleMouseUp = () => {

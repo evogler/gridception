@@ -77,8 +77,7 @@ const App = (props) => {
 
 
   const save = () => {
-    // console.log(nodes[1].toJson());
-    console.log(nodes[1]._coords);
+    nodes.forEach(node => console.log(node.toJson()));
   }
 
   return (
@@ -92,9 +91,9 @@ const App = (props) => {
         <RatioBox label="grid 1" node={nodes[5]} coords={[100, 100]} />
         <RatioBox label="grid 2" node={nodes[0]} coords={[100, 200]}/>
         <SoundGrid label="ride" node={nodes[1]} coords={[400, 300]} />
-        {/* <SoundGrid label="hat" node={nodes[3]}  coords={[400, 400]}/> */}
-        {/* <SoundGrid label="stick" node={nodes[4]} coords={[400, 500]}/> */}
-        {/* <SoundGrid label="kick" node={nodes[2]} coords={[400, 600]}/> */}
+        <SoundGrid label="hat" node={nodes[3]}  coords={[400, 400]}/>
+        <SoundGrid label="stick" node={nodes[4]} coords={[400, 500]}/>
+        <SoundGrid label="kick" node={nodes[2]} coords={[400, 600]}/>
 
       </div>
     </div>
