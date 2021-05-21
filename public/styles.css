@@ -127,8 +127,8 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 10;
-  height: 2px;
-  background-color: #F008;
+  z-index: -10;
+  height: 1px;
+  background-color: #0008;
   transform-origin: top left;
 }

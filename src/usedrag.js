@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const useDrag = (startX = 0, startY = 0, node = null) => {
+const useDrag = (startX = 0, startY = 0, node = null, updateCoords = null) => {
   const [coords, setCoords] = useState([startX, startY]);
   const [dragging, setDragging] = useState(false);
 
@@ -16,6 +16,9 @@ const useDrag = (startX = 0, startY = 0, node = null) => {
     setCoords([x, y]);
     if (node) {
       node._coords = [x, y];
+    }
+    if (updateCoords) {
+      updateCoords([x, y]);
     }
   }
 

@@ -14,7 +14,9 @@ import Scheduler from '../scheduler.js';
 
 const scheduler = new Scheduler();
 
-const jsonStr = `[{"id":0,"aspects":{"times":[1.334, 0.666],"sounds":["sidestick-2"],"volumes":[1],"rates":[1],"statuses":["on"]},"parent":5,"children":[1,2,3,4],"sounding":false,"coords":[100,200],"text":"2 : 2 1","type":"ratioNode"},{"id":1,"aspects":{"times":[1,1,1,1],"sounds":["ride"],"volumes":[1],"rates":[1],"statuses":["on","off","on","on"]},"parent":0,"children":[],"sounding":true,"coords":[430,113],"type":"node"},{"id":2,"aspects":{"times":[1,1,1,1,1],"sounds":["kick"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,375],"type":"node"},{"id":3,"aspects":{"times":[1,1,1,1],"sounds":["hat"],"volumes":[1],"rates":[1],"statuses":["off","off","on","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,203],"type":"node"},{"id":4,"aspects":{"times":[1,1,1,1,1],"sounds":["sidestick-2"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[431,288],"type":"node"},{"id":5,"aspects":{"times":[1],"sounds":["sidestick-2"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[0],"sounding":false,"coords":[100,100],"text":"1 : 1","type":"ratioNode"}]`;
+const jsonStr = `[
+
+  {"id":0,"label":"grid 2","aspects":{"times":[1.334, 0.666],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"parent":5,"children":[1,2,3,4],"sounding":false,"coords":[100,200],"text":"2 : 2 1","type":"ratioNode"},{"id":1,"label":"","aspects":{"times":[1,1,1,1],"sounds":["ride"],"volumes":[1],"rates":[1],"statuses":["on","off","on","on"]},"parent":0,"children":[],"sounding":true,"coords":[430,113],"type":"node"},{"id":2,"aspects":{"times":[1,1,1,1,1],"sounds":["kick"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,375],"type":"node"},{"id":3,"aspects":{"times":[1,1,1,1],"sounds":["hat"],"volumes":[1],"rates":[1],"statuses":["off","off","on","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,203],"type":"node"},{"id":4,"aspects":{"times":[1,1,1,1,1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[431,288],"type":"node"},{"id":5,"label":"grid 1","aspects":{"times":[1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[0],"sounding":false,"coords":[100,100],"text":"1 : 1","type":"ratioNode"}]`;
 
 const jsonData = JSON.parse(jsonStr);
 
@@ -65,9 +67,11 @@ const App = (props) => {
   }, []);
   const [currentTime, setCurrentTime] = useState(0);
 
-  const updateActive = id => (id, val) => {
-    setActives(acts => ({ ...acts, [id]: val }));
-  }
+  const updateActive = id =>
+
+    (id, val) => {
+      setActives(acts => ({ ...acts, [id]: val }));
+    }
 
   const updatePart = partIndex => index => {
     console.log(partIndex, index);
@@ -89,6 +93,28 @@ const App = (props) => {
     console.log(JSON.stringify(json));
   }
 
+  const [coords, setCoords] = useState(
+    Object.fromEntries(Object.entries(nodes).map(([k, v]) => [k, v._coords]))
+  );
+
+  const updateCoords = id => val => {
+    setCoords({ ...coords, [id]: val });
+  };
+
+  const parentCoords = id => {
+    if ([0, 5].includes(id)) {
+      return [coords[id][0] + 255, coords[id][1] + 50];
+    }
+    return [coords[id][0] + 12, coords[id][1] + 12];
+  }
+
+  const childCoords = id => {
+    if ([0, 5].includes(id)) {
+      return [coords[id][0] + 15, coords[id][1] + 12];
+    }
+    return [coords[id][0] + 12, coords[id][1] + 12];
+  }
+
   return (
     <div id="app" >
       <Header
@@ -96,14 +122,30 @@ const App = (props) => {
         currentTime={currentTime}
         save={save}
       />
-      <div className="canvas">
-        <RatioBox label="grid 1" node={nodes[5]} />
-        <RatioBox label="grid 2" node={nodes[0]} />
-        <SoundGrid label="ride" node={nodes[1]} />
-        <SoundGrid label="hat" node={nodes[3]} />
-        <SoundGrid label="stick" node={nodes[4]} />
-        <SoundGrid label="kick" node={nodes[2]} />
 
+      <div className="canvas">
+        {Object.values(nodes).map(n => {
+          if (n.type === 'node') {
+            return (<SoundGrid
+              key={n.id}
+              node={n}
+              label={n._aspects.sounds[0]}
+              updateCoords={updateCoords(n.id)}
+            />);
+          } else if (n.type === 'ratioNode') {
+            return (<RatioBox
+              key={n.id}
+              node={n}
+              label={n?.label}
+              updateCoords={updateCoords(n.id)}
+            />)
+          }
+        })}
+        <Line coords={[...parentCoords(0), ...childCoords(1)]} />
+        <Line coords={[...parentCoords(5), ...childCoords(0)]} />
+        <Line coords={[...parentCoords(0), ...childCoords(2)]} />
+        <Line coords={[...parentCoords(0), ...childCoords(3)]} />
+        <Line coords={[...parentCoords(0), ...childCoords(4)]} />
       </div>
     </div>
   );

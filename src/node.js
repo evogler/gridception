@@ -3,13 +3,15 @@ import nodeDefaults from './nodedefaults.js';
 
 class Node {
   constructor({ times, jsonData } = {}) {
+    this.type = 'node';
     if (jsonData) {
-       const { id, aspects, parent, children, sounding, coords } = jsonData;
+       const { id, aspects, parent, children, sounding, coords, label } = jsonData;
        this._parent = parent;
        this._children = children;
        this._aspects = aspects;
        this._sounding = sounding;
        this._coords = coords;
+       this.label = label;
        this.id = id;
        return;
     }

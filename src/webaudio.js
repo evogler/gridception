@@ -2,7 +2,7 @@ const drums = [
   'kick',
   'snare',
   'hat',
-  'sidestick-2',
+  'rim',
   // 'ride-bell',
   'ride'
 ];
@@ -11,7 +11,7 @@ const sampleLags = {
   'kick': 0.026,
   'snare': 0.0293,
   'hat': 0.0267,
-  'sidestick-2': 0.0245,
+  'rim': 0.0245,
   // 'ride-bell': 0.0395,
   'ride': 0.0443,
 };
@@ -20,7 +20,7 @@ const drumCodes = {
   'k': 'kick',
   's': 'snare',
   'h': 'hat',
-  'd': 'sidestick-2',
+  'd': 'rim',
   // 'b': 'ride-bell',
   'r': 'ride',
 };

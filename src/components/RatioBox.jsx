@@ -4,9 +4,9 @@ import DragIcon from './DragIcon.jsx';
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
-const RatioBox = ({ label, node, coords = [0, 0] }) => {
+const RatioBox = ({ label, node, coords = [0, 0], updateCoords }) => {
   coords = node._coords ? node._coords : coords;
-  const [x, y, drag] = useDrag(...coords, node);
+  const [x, y, drag] = useDrag(...coords, node, updateCoords);
   return (
     <div className="ratio-box" style={{ left: x, top: y }} >
       <DragIcon startDrag={drag} />

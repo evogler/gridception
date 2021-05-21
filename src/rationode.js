@@ -4,14 +4,16 @@ import { sum } from './util.js';
 class RatioNode extends Node {
   constructor({ timeStr, jsonData } = {}) {
     super({ });
+    this.type = 'ratioNode';
     if (jsonData) {
-      const { id, aspects, parent, children, sounding, text, coords } = jsonData;
+      const { id, aspects, parent, children, sounding, text, coords, label } = jsonData;
       this._parent = parent;
       this._children = children;
       this._aspects = aspects;
       this._sounding = sounding;
       this._text = text;
       this._coords = coords;
+      this.label = label;
       this.id = id;
       return;
    }
