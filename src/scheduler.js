@@ -5,7 +5,7 @@ window.ac = audioCtx;
 class Scheduler {
   constructor() {
     this.audioCtx = audioCtx;
-    this.bpm = 480;
+    this.bpm = 400;
     this.parts = [];
     this.eventLoopPeriod = 50; // ms
     this.eventBufferSize = 200; // ms

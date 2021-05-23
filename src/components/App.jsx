@@ -16,11 +16,21 @@ const scheduler = new Scheduler();
 
 const jsonStr = `[
 
-  {"id":0,"label":"grid 2","aspects":{"times":[1.334, 0.666],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"parent":5,"children":[1,2,3,4],"sounding":false,"coords":[100,200],"text":"2 : 2 1","type":"ratioNode"},{"id":1,"label":"","aspects":{"times":[1,1,1,1],"sounds":["ride"],"volumes":[1],"rates":[1],"statuses":["on","off","on","on"]},"parent":0,"children":[],"sounding":true,"coords":[430,113],"type":"node"},{"id":2,"aspects":{"times":[1,1,1,1,1],"sounds":["kick"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,375],"type":"node"},{"id":3,"aspects":{"times":[1,1,1,1],"sounds":["hat"],"volumes":[1],"rates":[1],"statuses":["off","off","on","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,203],"type":"node"},{"id":4,"aspects":{"times":[1,1,1,1,1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":0,"children":[],"sounding":true,"coords":[431,288],"type":"node"},{"id":5,"label":"grid 1","aspects":{"times":[1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[0],"sounding":false,"coords":[100,100],"text":"1 : 1","type":"ratioNode"}]`;
+  {"id":0,"label":"grid 1","aspects":{"times":[1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[1,3],"sounding":false,"coords":[100,160],"text":"1","type":"ratioNode"},
+
+  {"id":1,"label":"","aspects":{"times":[1,1,1,1],"sounds":["ride"],"volumes":[1],"rates":[1],"statuses":["on","off","on","on"]},"parent":0,"children":[],"sounding":true,"coords":[430,113],"type":"node"},
+
+  {"id":2,"aspects":{"times":[1,1,1,1,1],"sounds":["kick"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":5,"children":[],"sounding":true,"coords":[428,375],"type":"node"},
+
+  {"id":3,"aspects":{"times":[1,1,1,1],"sounds":["hat"],"volumes":[1],"rates":[1],"statuses":["off","off","on","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,203],"type":"node"},
+
+  {"id":4,"aspects":{"times":[1,1,1,1,1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":5,"children":[],"sounding":true,"coords":[431,288],"type":"node"},
+
+  {"id":5,"label":"grid 2","aspects":{"times":[1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[2,4],"sounding":false,"coords":[100,350],"text":"1","type":"ratioNode"}
+
+]`;
 
 const jsonData = JSON.parse(jsonStr);
-
-// console.log('json', jsonData);
 
 const loadFromJson = (jsonData) => {
   const nodes = {};
@@ -33,8 +43,11 @@ const loadFromJson = (jsonData) => {
       nodes[json.id] = n;
       scheduler.addPart(n);
     } else if (json.type === 'ratioNode') {
-      console.log('ratioNode');
       const n = new RatioNode({ jsonData: json });
+      nodes[json.id] = n;
+      scheduler.addPart(n);
+    } else if (json.type === 'hitsNode') {
+      const n = new HitsNode({ jsonData: json });
       nodes[json.id] = n;
       scheduler.addPart(n);
     }
@@ -129,7 +142,7 @@ const App = (props) => {
             return (<SoundGrid
               key={n.id}
               node={n}
-              label={n._aspects.sounds[0]}
+              label={n?.label || n._aspects.sounds[0]}
               updateCoords={updateCoords(n.id)}
             />);
           } else if (n.type === 'ratioNode') {
@@ -138,14 +151,21 @@ const App = (props) => {
               node={n}
               label={n?.label}
               updateCoords={updateCoords(n.id)}
-            />)
+            />);
+          } else if (n.type === 'hitsNode') {
+            return (<HitsGrid
+                key={n.id}
+                node={n}
+                label={n?.label || n._aspects.sounds[0]}
+                updateCoords={updateCoords(n.id)}
+              />
+            )
           }
         })}
         <Line coords={[...parentCoords(0), ...childCoords(1)]} />
-        <Line coords={[...parentCoords(5), ...childCoords(0)]} />
-        <Line coords={[...parentCoords(0), ...childCoords(2)]} />
+        <Line coords={[...parentCoords(5), ...childCoords(2)]} />
         <Line coords={[...parentCoords(0), ...childCoords(3)]} />
-        <Line coords={[...parentCoords(0), ...childCoords(4)]} />
+        <Line coords={[...parentCoords(5), ...childCoords(4)]} />
       </div>
     </div>
   );

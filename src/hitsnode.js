@@ -2,9 +2,13 @@ import Node from './node.js';
 
 class HitsNode extends Node {
   constructor({ length, jsonData } = {}) {
+    console.log('***', jsonData)
     super({ jsonData });
-    this._aspects.times = new Array(length).fill(1);
-    this._aspects.statuses = new Array(length).fill('on');
+    this.type = 'hitsNode';
+    if (!jsonData) {
+      this._aspects.times = new Array(length).fill(1);
+      this._aspects.statuses = new Array(length).fill('on');
+    }
     this._setAbsoluteTimes();
   }
 
@@ -24,11 +28,21 @@ class HitsNode extends Node {
   }
 
   _setAbsoluteTimes() {
-    const times = this._aspects.times;
-    this._absoluteTimes = [0];
-    times.forEach(time => this._absoluteTimes.push(this._absoluteTimes.slice(-1)[0] + time));
-    this._timePeriod = this._absoluteTimes.pop();
-    this._absoluteTimes = this._absoluteTimes.filter((_, idx) => this._aspects.statuses[idx] !== 'off');
+    let times = [];
+    const hitCount = times.length;
+
+    let absoluteTimes = [0];
+    times.forEach(time => absoluteTimes.push(absoluteTimes.slice(-1)[0] + time));
+    let timePeriod = absoluteTimes.pop();
+
+    const scaleRatio = hitCount / timePeriod;
+    timePeriod = hitCount;
+    times = times.map(time => time * scaleRatio);
+
+    this._absoluteTimes = times;
+    this._timePeriod = timePeriod;
+    console.log({ absoluteTimes });
+
     console.log(this._absoluteTimes, this._timePeriod);
     this._resetTimeCache();
     this._children.forEach(ch => ch._resetTimeCache());

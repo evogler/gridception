@@ -164,7 +164,6 @@ class Node {
       res.unshift(event);
       i -= 1;
     }
-    // console.log('Node.GEITW', this.id, startTime, endTime, res);
     return res;
   }
 }

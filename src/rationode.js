@@ -44,7 +44,8 @@ class RatioNode extends Node {
     this._text = str;
     let times = str.split(' ');
     times = times.map(Number).filter(x => x);
-    const period = times.shift();
+    // const period = times.shift();
+    const period = times.length;
     const timeSum = sum(times);
     const ratio = period / timeSum;
     times = times.map(n => n * ratio);

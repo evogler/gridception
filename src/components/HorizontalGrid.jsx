@@ -15,6 +15,10 @@ const HorizontalGrid = ({ status, update, label, node, active,
     setMuted(!muted);
   };
 
+  useEffect(() => {
+    console.log(node?.label, node?.type, node?._aspects?.statuses);
+  }, []);
+
   return (
     <div
       className={['horizontal-grid', muted ? 'muted' : ''].join(' ')}
