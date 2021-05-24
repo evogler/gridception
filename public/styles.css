@@ -133,3 +133,33 @@ button {
   background-color: #0008;
   transform-origin: top left;
 }
+
+.slider {
+  width: 200px;
+  background-color: red;
+  background: #d3d3d3;
+}
+
+.slider::-webkit-slider-thumb {
+  color: pink;
+  cursor: pointer;
+  background-color: grey;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  height: 20px;
+  border-radius: 10px;
+  height: 10px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: #888;
+  border-radius: 3px;
+  /* box-shadow: -210px 0 0 200px #666; */
+  cursor: pointer;
+  height: 16px;
+  width: 8px;
+  border: 0;
+}

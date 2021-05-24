@@ -14,6 +14,7 @@ class Scheduler {
     this.id = Math.floor(Math.random() * 1e8);
     this.timeListeners = [];
     this.timePublishInterval = 50; // ms
+    window.setBpm = this.setBpm.bind(this);
   }
 
   addPart(part) {
@@ -27,6 +28,9 @@ class Scheduler {
 
   setBpm(bpm) {
     this.bpm = bpm;
+    const now = this._now();
+    this.startTimeBeats = this.audioCtx.currentTime;
+    this.startTimeSeconds = now;
   }
 
   click() {
@@ -47,7 +51,8 @@ class Scheduler {
       console.log('AUDIOCTX RESUMED!!!');
     }
     this.playing = true;
-    this.startTime = this.audioCtx.currentTime;
+    this.startTimeSeconds = this.audioCtx.currentTime;
+    this.startTimeBeats = 2;
     this.lastEventWindowEnd = 0;
     this._eventLoop();
     this._publishTimeLoop();
@@ -76,13 +81,13 @@ class Scheduler {
 
   _now() {
     // returns current time in seconds
-    return this.audioCtx.currentTime - this.startTime;
+    return this.audioCtx.currentTime - this.startTimeSeconds;
   }
 
-  _getEventsInWindow(startTime, endTime) {
+  _getEventsInWindow(startTimeSeconds, endTime) {
     const events = [];
     for (const part of this.parts) {
-      for (event of part.getEventsInTimeWindow(startTime, endTime)) {
+      for (event of part.getEventsInTimeWindow(startTimeSeconds, endTime)) {
         event.sounding = part.sounding;
         events.push(event);
       }
@@ -92,12 +97,12 @@ class Scheduler {
   }
 
   _realTimeToMusicTime(time) {
-    const musicTime = time * (this.bpm / 60);
+    const musicTime = time * (this.bpm / 60) + this.startTimeBeats;
     return musicTime;
   }
 
   _musicTimeToAudioCtxTime(time) {
-    const realTime = time * (60 / this.bpm);
+    const realTime = (time - this.startTimeBeats) * (60 / this.bpm);
     return realTime;
   }
 
@@ -119,16 +124,15 @@ class Scheduler {
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
       if (setActive) {
-        const delay = (eventTime - this._now()) * 1000;
+        const delay = (eventTime - this.startTimeSeconds) * 1000;
         const visualOffset = 1;
         setActive();
-        // setTimeout(setActive, delay + visualOffset);
       }
 
 
       if (status === 'on' && sounding) {
         if (eventTime > this._now()) {
-          playSound(sound, eventTime + this.startTime, 1, 1);
+          playSound(sound, eventTime + this.startTimeSeconds, 1, 1);
         } else {
           console.warn('Dropped note:', sound, time, eventTime);
         }

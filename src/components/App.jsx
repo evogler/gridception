@@ -116,7 +116,7 @@ const App = (props) => {
 
   const parentCoords = id => {
     if ([0, 5].includes(id)) {
-      return [coords[id][0] + 255, coords[id][1] + 50];
+      return [coords[id][0] + 254, coords[id][1] + 50];
     }
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
@@ -128,12 +128,17 @@ const App = (props) => {
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
 
+  const setBpm = bpm => {
+    scheduler.setBpm(bpm);
+  }
+
   return (
     <div id="app" >
       <Header
         buttonClick={buttonClick}
         currentTime={currentTime}
         save={save}
+        setBpm={setBpm}
       />
 
       <div className="canvas">

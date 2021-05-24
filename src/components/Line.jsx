@@ -10,7 +10,6 @@ const Line = ({ coords }) => {
   y2 -= margin;
   const w = x2 - x1;
   const h = y2 - y1;
-  console.log('w', w, 'h', h);
   const rot = Math.atan2(h, w);
   const dist = Math.sqrt(w ** 2 + h ** 2)
   const transX = x1;
