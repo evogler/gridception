@@ -3,7 +3,7 @@ import useDrag from '../usedrag.js';
 import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
-const HorizontalGrid = ({ status, update, label, node, active,
+const HorizontalGrid = ({ status, update, forceUpdate, label, node, active,
   startCoords, updateCoords, lengthen, shorten, mute }) => {
 
   startCoords = node._coords ? node._coords : startCoords;
@@ -30,7 +30,7 @@ const HorizontalGrid = ({ status, update, label, node, active,
       <span onClick={shorten}>-</span>
       <span onClick={toggleMute}>m</span>
       {status.map((_, i) => (
-        <GridCell key={i} index={i} status={status[i]} active={i === active && status[i] === 'on'} click={() => update(i)} />
+        <GridCell key={i} index={i} status={status[i]} active={i === active && status[i] === 'on'} click={() => {update(i); forceUpdate();}} />
       ))}
     </ div>
   );

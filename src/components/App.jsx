@@ -71,6 +71,11 @@ const nodes = loadFromJson(jsonData);
 
 window.nodes = nodes;
 
+function useForceUpdate(){
+  const [value, setValue] = useState(0);
+  return () => setValue(value => value + 1);
+}
+
 const App = (props) => {
 
   const [actives, setActives] = useState(Object.fromEntries(Object.values(nodes).map(node => [node.id, 1])));
@@ -128,9 +133,9 @@ const App = (props) => {
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
 
-  const setBpm = bpm => {
-    scheduler.setBpm(bpm);
-  }
+  const setBpm = bpm => { scheduler.setBpm(bpm); }
+
+  const forceUpdate = useForceUpdate();
 
   return (
     <div id="app" >
@@ -149,6 +154,7 @@ const App = (props) => {
               node={n}
               label={n?.label || n._aspects.sounds[0]}
               updateCoords={updateCoords(n.id)}
+              forceUpdate={forceUpdate}
             />);
           } else if (n.type === 'ratioNode') {
             return (<RatioBox

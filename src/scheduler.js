@@ -52,7 +52,7 @@ class Scheduler {
     }
     this.playing = true;
     this.startTimeSeconds = this.audioCtx.currentTime;
-    this.startTimeBeats = 2;
+    this.startTimeBeats = 0;
     this.lastEventWindowEnd = 0;
     this._eventLoop();
     this._publishTimeLoop();
