@@ -3,7 +3,7 @@ import { sum } from './util.js';
 
 class RatioNode extends Node {
   constructor({ timeStr, jsonData } = {}) {
-    super({ });
+    super({});
     this.type = 'ratioNode';
     if (jsonData) {
       const { id, aspects, parent, children, sounding, text, coords, label } = jsonData;
@@ -16,7 +16,7 @@ class RatioNode extends Node {
       this.label = label;
       this.id = id;
       return;
-   }
+    }
 
 
     if (timeStr) {
@@ -38,17 +38,33 @@ class RatioNode extends Node {
     };
   }
 
+  _getNumbers(str) {
+    return [...str.matchAll(/([0-9.]+)/g)].map(x => Number(x[0]));
+  }
+
+  _interpretRatioNodeStr(str) {
+    const groups = str.split(',');
+    const res = [];
+    for (let group of groups) {
+      let beats, length;
+      if (~group.indexOf(':')) {
+        beats = this._getNumbers(group.split(':')[0]);
+        length = this._getNumbers(group.split(':')[1])[0];
+      } else {
+        beats = this._getNumbers(group);
+        length = beats.length;
+      }
+      const ratio = length / beats.reduce((sum, n) => sum + n, 0);
+      beats = beats.map(n => n * ratio);
+      res.push(...beats);
+    }
+    return res;
+  };
+
   setTime(str) {
     // debugger;
     console.log("setTime", str);
-    this._text = str;
-    let times = str.split(' ');
-    times = times.map(Number).filter(x => x);
-    // const period = times.shift();
-    const period = times.length;
-    const timeSum = sum(times);
-    const ratio = period / timeSum;
-    times = times.map(n => n * ratio);
+    const times = this._interpretRatioNodeStr(str);
     this._aspects.times = times;
     this._aspects.statuses.map(_ => 'on');
     this._setAbsoluteTimes();

@@ -108,7 +108,7 @@ class Node {
   }
 
   _resetTimeCache() {
-    // console.log('resetTimeCache', this.id);
+    console.log('resetTimeCache', this.id);
     this._timeCache = [];
     this._children.map(ch => ch._resetTimeCache());
     // console.log('reset time cache', this.id);
@@ -135,7 +135,7 @@ class Node {
   }
 
   getTime(time) {
-    this._extendTimeCache(time);
+    this._extendTimeCache(time + 0);
     if (time % 1 === 0) {
       return this._timeCache[Math.floor(time)];
     }
