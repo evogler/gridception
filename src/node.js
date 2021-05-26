@@ -118,6 +118,7 @@ class Node {
     while (endTime >= (this._timeCache.length - 1)) {
       let index = this._timeCache.length;
       let newTime = this._getOwnTime(index);
+      // console.log('extending', newTime);
       if (this._parent) {
         newTime = this._parent.getTime(newTime);
       }
