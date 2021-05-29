@@ -1,4 +1,5 @@
 import { playSound, audioCtx } from './webaudio.js';
+import log from './logger.js';
 
 window.ac = audioCtx;
 
@@ -88,6 +89,7 @@ class Scheduler {
     const events = [];
     for (const part of this.parts) {
       for (event of part.getEventsInTimeWindow(startTimeSeconds, endTime)) {
+        log.log('getEventsInWindow', part.label, 'testing');
         event.sounding = part.sounding;
         events.push(event);
       }
@@ -129,7 +131,7 @@ class Scheduler {
         setActive();
       }
 
-
+      log.log('event');
       if (status === 'on' && sounding) {
         if (eventTime > this._now()) {
           playSound(sound, eventTime + this.startTimeSeconds, 1, 1);

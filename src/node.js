@@ -1,3 +1,4 @@
+import { log } from './logger.js';
 import { uniqueId } from './util.js';
 import nodeDefaults from './nodedefaults.js';
 
@@ -5,15 +6,15 @@ class Node {
   constructor({ times, jsonData } = {}) {
     this.type = 'node';
     if (jsonData) {
-       const { id, aspects, parent, children, sounding, coords, label } = jsonData;
-       this._parent = parent;
-       this._children = children;
-       this._aspects = aspects;
-       this._sounding = sounding;
-       this._coords = coords;
-       this.label = label;
-       this.id = id;
-       return;
+      const { id, aspects, parent, children, sounding, coords, label } = jsonData;
+      this._parent = parent;
+      this._children = children;
+      this._aspects = aspects;
+      this._sounding = sounding;
+      this._coords = coords;
+      this.label = label;
+      this.id = id;
+      return;
     }
 
     this._parent = null;
@@ -90,15 +91,17 @@ class Node {
   }
 
   _setAbsoluteTimes() {
+    log('setAbsoluteTimes');
     const times = this._aspects.times;
     this._absoluteTimes = [0];
     times.forEach(time => this._absoluteTimes.push(this._absoluteTimes.slice(-1)[0] + time));
     this._timePeriod = this._absoluteTimes.pop();
     this._resetTimeCache();
-    this._children.forEach(ch => ch._resetTimeCache());
+    // this._children.forEach(ch => ch._resetTimeCache());
   }
 
   _getOwnTime(index) {
+    log('getOwnTime');
     if (!this._absoluteTimes) {
       this._setAbsoluteTimes();
     }
@@ -108,14 +111,15 @@ class Node {
   }
 
   _resetTimeCache() {
-    console.log('resetTimeCache', this.id);
+    log('resetTimeCache', this.label);
     this._timeCache = [];
     this._children.map(ch => ch._resetTimeCache());
     // console.log('reset time cache', this.id);
   }
 
   _extendTimeCache(endTime) {
-    while (endTime >= (this._timeCache.length - 1)) {
+    log('extendTimeCache', endTime);
+    while (endTime >= (this._timeCache.slice(-1)[0] ?? 0)) {
       let index = this._timeCache.length;
       let newTime = this._getOwnTime(index);
       // console.log('extending', newTime);
@@ -127,6 +131,7 @@ class Node {
   }
 
   _getAspectsAtIndex(index, aspects) {
+    log('getAspectsAtIndex');
     const res = {};
     for (const aspect in this._aspects) {
       const arr = this._aspects[aspect];
@@ -136,6 +141,7 @@ class Node {
   }
 
   getTime(time) {
+    log('getTime');
     this._extendTimeCache(time + 0);
     if (time % 1 === 0) {
       return this._timeCache[Math.floor(time)];
@@ -147,6 +153,7 @@ class Node {
   }
 
   getEventsInTimeWindow(startTime, endTime, aspects = null) {
+    log('getEventsInTimeWindow');
     this._extendTimeCache(endTime);
     const res = [];
     let i = this._timeCache.length - 1;

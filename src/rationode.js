@@ -1,5 +1,6 @@
 import Node from './node.js';
 import { sum } from './util.js';
+import log from './logger.js';
 
 class RatioNode extends Node {
   constructor({ timeStr, jsonData } = {}) {
@@ -63,7 +64,6 @@ class RatioNode extends Node {
 
   setTime(str) {
     // debugger;
-    console.log("setTime", str);
     const times = this._interpretRatioNodeStr(str);
     this._aspects.times = times;
     this._aspects.statuses.map(_ => 'on');
