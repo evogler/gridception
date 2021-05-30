@@ -3,8 +3,15 @@ import useDrag from '../usedrag.js';
 import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
-const HorizontalGrid = ({ status, update, forceUpdate, label, node, active,
-  startCoords, updateCoords, lengthen, shorten, mute }) => {
+const HorizontalGrid = (props) => {
+  let { status, update, forceUpdate, label, node, active,
+    startCoords, updateCoords, lengthen, shorten, mute } = props;
+
+  // if(node.label === 'hat 2') {
+  //   debugger;
+  // }
+
+  // console.log('new HorizontalGrid props:', props);
 
   startCoords = node._coords ? node._coords : startCoords;
   const [x, y, drag] = useDrag(...startCoords, node, updateCoords);

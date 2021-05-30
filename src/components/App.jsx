@@ -67,21 +67,23 @@ const loadFromJson = (jsonData) => {
   return nodes;
 };
 
-const nodes = loadFromJson(jsonData);
 
-window.nodes = nodes;
 
-function useForceUpdate(){
+function useForceUpdate() {
   const [value, setValue] = useState(0);
   return () => setValue(value => value + 1);
 }
 
 const App = (props) => {
 
+  const [nodes, setNodes] = useState(() => loadFromJson(jsonData));
+
+
   const [actives, setActives] = useState(Object.fromEntries(Object.values(nodes).map(node => [node.id, 1])));
 
   useEffect(() => {
-    console.log(actives);
+    // console.log(actives);
+    window.nodes = nodes;
   }, []);
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -137,6 +139,17 @@ const App = (props) => {
 
   const forceUpdate = useForceUpdate();
 
+  const addNode = () => {
+    const node = new Node();
+    node.label = 'hat 2';
+    node.setParent(nodes[5]);
+    node._coords = [500, 500];
+    node._setAbsoluteTimes();
+    console.log('addNode, nodes', nodes, 'node', node);
+    scheduler.addPart(node);
+    setNodes({ ...nodes, [node.id]: node });
+  };
+
   return (
     <div id="app" >
       <Header
@@ -145,6 +158,7 @@ const App = (props) => {
         save={save}
         setBpm={setBpm}
       />
+      <button onClick={addNode}>NEW NODE</button>
 
       <div className="canvas">
         {Object.values(nodes).map(n => {
@@ -165,11 +179,11 @@ const App = (props) => {
             />);
           } else if (n.type === 'hitsNode') {
             return (<HitsGrid
-                key={n.id}
-                node={n}
-                label={n?.label || n._aspects.sounds[0]}
-                updateCoords={updateCoords(n.id)}
-              />
+              key={n.id}
+              node={n}
+              label={n?.label || n._aspects.sounds[0]}
+              updateCoords={updateCoords(n.id)}
+            />
             )
           }
         })}

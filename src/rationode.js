@@ -68,6 +68,7 @@ class RatioNode extends Node {
     this._aspects.times = times;
     this._aspects.statuses.map(_ => 'on');
     this._setAbsoluteTimes();
+    console.log('setTime', 'times', times, 'absoluteTimes', this._absoluteTimes);
   }
 }
 
