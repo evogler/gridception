@@ -5,6 +5,7 @@ import nodeDefaults from './nodedefaults.js';
 class Node {
   constructor({ times, jsonData } = {}) {
     this.type = 'node';
+    this.id = uniqueId();
     if (jsonData) {
       const { id, aspects, parent, children, sounding, coords, label } = jsonData;
       this._parent = parent;
@@ -25,7 +26,6 @@ class Node {
     }
     this._sounding = true;
     this._timeCache = [];
-    this.id = uniqueId();
     // console.log('Creating new Node', this.id);
   }
 
@@ -91,17 +91,18 @@ class Node {
   }
 
   _setAbsoluteTimes() {
-    log('setAbsoluteTimes');
+    log('setAbsoluteTimes', this._timeCache);
     const times = this._aspects.times;
     this._absoluteTimes = [0];
     times.forEach(time => this._absoluteTimes.push(this._absoluteTimes.slice(-1)[0] + time));
     this._timePeriod = this._absoluteTimes.pop();
     this._resetTimeCache();
     // this._children.forEach(ch => ch._resetTimeCache());
+    log('setAbsoluteTimes done', this._timeCache);
   }
 
   _getOwnTime(index) {
-    log('getOwnTime');
+    log('getOwnTime', index);
     if (!this._absoluteTimes) {
       this._setAbsoluteTimes();
     }
@@ -118,16 +119,35 @@ class Node {
   }
 
   _extendTimeCache(endTime) {
-    log('extendTimeCache', endTime);
-    while (endTime >= (this._timeCache.slice(-1)[0] ?? 0)) {
+    // debugger;
+    log('extendTimeCache', endTime, this._timeCache);
+    let max = 100;
+    while (endTime >= (this._timeCache.slice(-1)[0] ?? 0)
+      || endTime >= this._timeCache.length) {
       let index = this._timeCache.length;
       let newTime = this._getOwnTime(index);
-      // console.log('extending', newTime);
       if (this._parent) {
         newTime = this._parent.getTime(newTime);
       }
+      if (newTime === undefined) { debugger; }
       this._timeCache.push(newTime);
+      max -= 1;
+      if (!max) {
+        console.log('extendTimeCache maxed out',
+          endTime,
+          'this._timeCache.slice(-1)[0]', this._timeCache.slice(-1)[0],
+          'this._timeCache.length', this._timeCache.length,
+          );
+        if (this._timeCache.slice(-1)[0] === undefined) {
+          // debugger;
+        }
+        return;
+      }
     }
+    // console.log('extendTimeCache finished normally',
+    //   'endTime:', endTime,
+    //   'this._timeCache.slice(-1)[0]', this._timeCache.slice(-1)[0],
+    // );
   }
 
   _getAspectsAtIndex(index, aspects) {
@@ -153,7 +173,7 @@ class Node {
   }
 
   getEventsInTimeWindow(startTime, endTime, aspects = null) {
-    log('getEventsInTimeWindow');
+    log('getEventsInTimeWindow', startTime, endTime);
     this._extendTimeCache(endTime);
     const res = [];
     let i = this._timeCache.length - 1;
