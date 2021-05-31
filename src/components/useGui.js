@@ -5,16 +5,17 @@ function useForceUpdate() {
   return () => setValue(value => value + 1);
 }
 
-const useGui = (nodes, scheduler) => {
-  const [actives, setActives] = useState(Object.fromEntries(Object.values(nodes).map(node => [node.id, 1])));
+const useGui = (audio) => {
+
+  const [actives, setActives] = useState(Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
-  scheduler.addTimeListener((time) => setCurrentTime(time));
+  audio.scheduler.addTimeListener((time) => setCurrentTime(time));
   const updateActive = id => (id, val) => {
     setActives(acts => ({ ...acts, [id]: val }));
   }
-  const buttonClick = () => { scheduler.click(); };
+  const buttonClick = () => { audio.scheduler.click(); };
   const [coords, setCoords] = useState(
-    Object.fromEntries(Object.entries(nodes).map(([k, v]) => [k, v._coords]))
+    Object.fromEntries(Object.entries(audio.nodes).map(([k, v]) => [k, v._coords]))
   );
   const updateCoords = id => val => { setCoords({ ...coords, [id]: val }); };
   const parentCoords = id => {

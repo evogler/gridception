@@ -14,10 +14,7 @@ import { jsonData, loadFromJson } from './fromJson.js';
 import useGui from './useGui.js';
 import useAudioEngine from './useAudioEngine.js';
 
-
-
-
-const useAddSoundGrid = ({ audio, gui }) => sound => () => {
+const addSoundGrid = ({ audio, gui }, sound) => () => {
   const node = new Node();
   node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
   node.set('sounds', [sound]);
@@ -30,15 +27,14 @@ const useAddSoundGrid = ({ audio, gui }) => sound => () => {
 };
 
 const Components = {
-  'node': SoundGrid,
-  'ratioNode': RatioBox,
-  'hitsNode': HitsGrid,
+  'node': SoundGrid, 'ratioNode': RatioBox, 'hitsNode': HitsGrid,
 };
+
+const soundTypes = ['hat', 'ride', 'rim', 'kick'];
 
 const App = (props) => {
   const audio = useAudioEngine();
-  const gui = useGui(audio.nodes, audio.scheduler);
-  const addSoundGrid = useAddSoundGrid({ audio, gui });
+  const gui = useGui(audio);
 
   return (
     <div id="app" >
@@ -49,8 +45,10 @@ const App = (props) => {
         setBpm={audio.setBpm}
       />
 
-      {['hat', 'ride', 'rim', 'kick'].map(sound => (
-        <button onClick={addSoundGrid(sound)}>NEW {sound.toUpperCase()}</button>
+      {soundTypes.map(sound => (
+        <button onClick={addSoundGrid({ audio, gui }, sound)}>
+          NEW {sound.toUpperCase()}
+        </button>
       ))}
 
       <div className="canvas">
