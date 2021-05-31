@@ -20,6 +20,7 @@ class Scheduler {
 
   addPart(part) {
     this.parts.push(part);
+    console.log('scheduler.addPart', part);
   }
 
   reset() {
@@ -132,7 +133,6 @@ class Scheduler {
       log.log('event');
       if (status === 'on' && sounding) {
         const identity = JSON.stringify([time, status, sound]);
-        console.log(identity);
         if (!seenEvents.has(identity)) {
           seenEvents.add(identity);
           if (eventTime > this._now()) {

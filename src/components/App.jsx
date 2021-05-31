@@ -10,193 +10,73 @@ import interpretPart from '../interpreter.js';
 import Node from '../node.js';
 import RatioNode from '../rationode.js';
 import HitsNode from '../hitsnode.js';
-import Scheduler from '../scheduler.js';
+import { jsonData, loadFromJson } from './fromJson.js';
+import useGui from './useGui.js';
+import useAudioEngine from './useAudioEngine.js';
 
-const scheduler = new Scheduler();
 
-const jsonStr = `[
 
-  {"id":0,"label":"grid 1","aspects":{"times":[1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[1,3],"sounding":false,"coords":[100,160],"text":"1","type":"ratioNode"},
 
-  {"id":1,"label":"ride","aspects":{"times":[1,1,1,1],"sounds":["ride"],"volumes":[1],"rates":[1],"statuses":["on","off","on","on"]},"parent":0,"children":[],"sounding":true,"coords":[430,113],"type":"node"},
-
-  {"id":2,"label":"kick","aspects":{"times":[1,1,1,1,1],"sounds":["kick"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":5,"children":[],"sounding":true,"coords":[428,375],"type":"node"},
-
-  {"id":3,"label":"hat","aspects":{"times":[1,1,1,1],"sounds":["hat"],"volumes":[1],"rates":[1],"statuses":["off","off","on","off"]},"parent":0,"children":[],"sounding":true,"coords":[428,203],"type":"node"},
-
-  {"id":4,"label":"rim","aspects":{"times":[1,1,1,1,1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["off","off","off","off","off"]},"parent":5,"children":[],"sounding":true,"coords":[431,288],"type":"node"},
-
-  {"id":5,"label":"grid 2","aspects":{"times":[1],"sounds":["rim"],"volumes":[1],"rates":[1],"statuses":["on"]},"children":[2,4],"sounding":false,"coords":[100,350],"text":"1","type":"ratioNode"}
-
-]`;
-
-const jsonData = JSON.parse(jsonStr);
-
-const loadFromJson = (jsonData) => {
-  const nodes = {};
-
-  scheduler.reset();
-
-  for (const json of jsonData) {
-    if (json.type === 'node') {
-      const n = new Node({ jsonData: json });
-      nodes[json.id] = n;
-      scheduler.addPart(n);
-    } else if (json.type === 'ratioNode') {
-      const n = new RatioNode({ jsonData: json });
-      nodes[json.id] = n;
-      scheduler.addPart(n);
-    } else if (json.type === 'hitsNode') {
-      const n = new HitsNode({ jsonData: json });
-      nodes[json.id] = n;
-      scheduler.addPart(n);
-    }
-  }
-
-  for (const node of Object.values(nodes)) {
-    if (Number.isInteger(node._parent)) {
-      node._parent = nodes[node._parent];
-    }
-    node._children = node._children.map(ch => nodes[ch]);
-  }
-
-  for (const node of Object.values(nodes)) {
-    node._setAbsoluteTimes();
-  }
-
-  return nodes;
+const useAddSoundGrid = ({ audio, gui }) => sound => () => {
+  const node = new Node();
+  node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
+  node.set('sounds', [sound]);
+  node.label = `new ${sound}`;
+  node.setParent(nodes[5]);
+  node._coords = [500, 500];
+  gui.updateCoords(node.id)([500, 500]);
+  audio.scheduler.addPart(node);
+  audio.setNodes({ ...audio.nodes, [node.id]: node });
 };
 
-
-
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return () => setValue(value => value + 1);
-}
-
 const App = (props) => {
-
-  const [nodes, setNodes] = useState(() => loadFromJson(jsonData));
-
-
-  const [actives, setActives] = useState(Object.fromEntries(Object.values(nodes).map(node => [node.id, 1])));
-
-  useEffect(() => {
-    // console.log(actives);
-    window.nodes = nodes;
-  }, []);
-  const [currentTime, setCurrentTime] = useState(0);
-
-  const updateActive = id =>
-
-    (id, val) => {
-      setActives(acts => ({ ...acts, [id]: val }));
-    }
-
-  const updatePart = partIndex => index => {
-    console.log(partIndex, index);
-    const newParts = [...parts];
-    toggle(newParts[partIndex].status, index);
-    setParts(newParts);
-    console.log(newParts[partIndex].status);
-  };
-
-  const buttonClick = () => {
-    scheduler.click();
-  }
-
-  scheduler.addTimeListener((time) => setCurrentTime(time));
-
-
-  const save = () => {
-    const json = nodes.map(node => node.toJson());
-    console.log(JSON.stringify(json));
-  }
-
-  const [coords, setCoords] = useState(
-    Object.fromEntries(Object.entries(nodes).map(([k, v]) => [k, v._coords]))
-  );
-
-  const updateCoords = id => val => {
-    setCoords({ ...coords, [id]: val });
-  };
-
-  const parentCoords = id => {
-    if ([0, 5].includes(id)) {
-      return [coords[id][0] + 254, coords[id][1] + 50];
-    }
-    return [coords[id][0] + 12, coords[id][1] + 12];
-  }
-
-  const childCoords = id => {
-    if ([0, 5].includes(id)) {
-      return [coords[id][0] + 15, coords[id][1] + 12];
-    }
-    return [coords[id][0] + 12, coords[id][1] + 12];
-  }
-
-  const setBpm = bpm => { scheduler.setBpm(bpm); }
-
-  const forceUpdate = useForceUpdate();
-
-  const addSoundGrid = sound => () => {
-    const node = new Node();
-    node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
-    node.set('sounds', [sound]);
-    node.label = `new ${sound}`;
-    node.setParent(nodes[5]);
-    node._coords = [500, 500];
-    updateCoords(node.id)([500, 500]);
-    node._setAbsoluteTimes();
-    scheduler.addPart(node);
-    setNodes({ ...nodes, [node.id]: node });
-  };
+  const audio = useAudioEngine();
+  const gui = useGui(audio.nodes, audio.scheduler);
+  const addSoundGrid = useAddSoundGrid({ audio, gui });
 
   return (
     <div id="app" >
       <Header
-        buttonClick={buttonClick}
-        currentTime={currentTime}
-        save={save}
-        setBpm={setBpm}
+        buttonClick={gui.buttonClick}
+        currentTime={gui.currentTime}
+        save={audio.save}
+        setBpm={audio.setBpm}
       />
 
-      <button onClick={addSoundGrid('hat')}>NEW HAT</button>
-      <button onClick={addSoundGrid('ride')}>NEW RIDE</button>
-      <button onClick={addSoundGrid('rim')}>NEW RIM</button>
-      <button onClick={addSoundGrid('kick')}>NEW KICK</button>
+      {['hat', 'ride', 'rim', 'kick'].map(sound => (
+        <button onClick={addSoundGrid(sound)}>NEW {sound.toUpperCase()}</button>
+      ))}
 
       <div className="canvas">
-        {Object.values(nodes).map(n => {
+        {Object.values(audio.nodes).map(n => {
           if (n.type === 'node') {
             return (<SoundGrid
-              key={n.id}
-              node={n}
+              key={n.id} node={n}
               label={n?.label || n._aspects.sounds[0]}
-              updateCoords={updateCoords(n.id)}
-              forceUpdate={forceUpdate}
+              updateCoords={gui.updateCoords(n.id)}
+              forceUpdate={gui.forceUpdate}
             />);
           } else if (n.type === 'ratioNode') {
             return (<RatioBox
-              key={n.id}
-              node={n}
-              label={n?.label}
-              updateCoords={updateCoords(n.id)}
+              key={n.id} node={n}
+              label={n?.label || n._aspects.sounds[0]}
+              updateCoords={gui.updateCoords(n.id)}
+              forceUpdate={gui.forceUpdate}
             />);
           } else if (n.type === 'hitsNode') {
             return (<HitsGrid
-              key={n.id}
-              node={n}
+              key={n.id} node={n}
               label={n?.label || n._aspects.sounds[0]}
-              updateCoords={updateCoords(n.id)}
+              updateCoords={gui.updateCoords(n.id)}
+              forceUpdate={gui.forceUpdate}
             />
             )
           }
         })}
-        {Object.values(nodes).map(node => node._parent && (
+        {Object.values(audio.nodes).map(node => node._parent && (
           <Line coords={[
-            ...parentCoords(node._parent.id),
-            ...childCoords(node.id)
+            ...gui.parentCoords(node._parent.id),
+            ...gui.childCoords(node.id)
           ]} />
         ))}
       </div>

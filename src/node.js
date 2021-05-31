@@ -47,6 +47,7 @@ class Node {
   setParent(parent) {
     this._parent = parent;
     parent.addChild(this);
+    this._setAbsoluteTimes();
   }
 
   addChild(child) {
