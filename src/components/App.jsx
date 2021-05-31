@@ -29,6 +29,12 @@ const useAddSoundGrid = ({ audio, gui }) => sound => () => {
   audio.setNodes({ ...audio.nodes, [node.id]: node });
 };
 
+const Components = {
+  'node': SoundGrid,
+  'ratioNode': RatioBox,
+  'hitsNode': HitsGrid,
+};
+
 const App = (props) => {
   const audio = useAudioEngine();
   const gui = useGui(audio.nodes, audio.scheduler);
@@ -49,30 +55,15 @@ const App = (props) => {
 
       <div className="canvas">
         {Object.values(audio.nodes).map(n => {
-          if (n.type === 'node') {
-            return (<SoundGrid
-              key={n.id} node={n}
-              label={n?.label || n._aspects.sounds[0]}
-              updateCoords={gui.updateCoords(n.id)}
-              forceUpdate={gui.forceUpdate}
-            />);
-          } else if (n.type === 'ratioNode') {
-            return (<RatioBox
-              key={n.id} node={n}
-              label={n?.label || n._aspects.sounds[0]}
-              updateCoords={gui.updateCoords(n.id)}
-              forceUpdate={gui.forceUpdate}
-            />);
-          } else if (n.type === 'hitsNode') {
-            return (<HitsGrid
-              key={n.id} node={n}
-              label={n?.label || n._aspects.sounds[0]}
-              updateCoords={gui.updateCoords(n.id)}
-              forceUpdate={gui.forceUpdate}
-            />
-            )
-          }
+          const Component = Components[n.type];
+          return (<Component
+            key={n.id} node={n}
+            label={n?.label || n._aspects.sounds[0]}
+            updateCoords={gui.updateCoords(n.id)}
+            forceUpdate={gui.forceUpdate}
+          />);
         })}
+
         {Object.values(audio.nodes).map(node => node._parent && (
           <Line coords={[
             ...gui.parentCoords(node._parent.id),
