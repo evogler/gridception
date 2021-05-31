@@ -139,10 +139,11 @@ const App = (props) => {
 
   const forceUpdate = useForceUpdate();
 
-  const addSoundGrid = () => {
+  const addSoundGrid = sound => () => {
     const node = new Node();
     node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
-    node.label = 'new node';
+    node.set('sounds', [sound]);
+    node.label = `new ${sound}`;
     node.setParent(nodes[5]);
     node._coords = [500, 500];
     updateCoords(node.id)([500, 500]);
@@ -159,7 +160,11 @@ const App = (props) => {
         save={save}
         setBpm={setBpm}
       />
-      <button onClick={addSoundGrid}>NEW NODE</button>
+
+      <button onClick={addSoundGrid('hat')}>NEW HAT</button>
+      <button onClick={addSoundGrid('ride')}>NEW RIDE</button>
+      <button onClick={addSoundGrid('rim')}>NEW RIM</button>
+      <button onClick={addSoundGrid('kick')}>NEW KICK</button>
 
       <div className="canvas">
         {Object.values(nodes).map(n => {
