@@ -86,10 +86,9 @@ class Scheduler {
   }
 
   _getEventsInWindow(startTimeSeconds, endTime) {
-    const events = [];
+    let events = [];
     for (const part of this.parts) {
       for (event of part.getEventsInTimeWindow(startTimeSeconds, endTime)) {
-        log.log('getEventsInWindow', part.label, 'testing');
         event.sounding = part.sounding;
         events.push(event);
       }
@@ -114,8 +113,7 @@ class Scheduler {
     const startMusicTime = this._realTimeToMusicTime(startRealTime);
     const endMusicTime = this._realTimeToMusicTime(endRealTime);
     const events = this._getEventsInWindow(startMusicTime, endMusicTime);
-    // console.log('startMusicTime', startMusicTime, 'endMusicTime', endMusicTime);
-    // console.log('events', events);
+    const seenEvents = new Set();
     events.forEach((e) => {
       const time = e.time;
       const status = e.statuses;
@@ -133,10 +131,15 @@ class Scheduler {
 
       log.log('event');
       if (status === 'on' && sounding) {
-        if (eventTime > this._now()) {
-          playSound(sound, eventTime + this.startTimeSeconds, 1, 1);
-        } else {
-          console.warn('Dropped note:', sound, time, eventTime);
+        const identity = JSON.stringify([time, status, sound]);
+        console.log(identity);
+        if (!seenEvents.has(identity)) {
+          seenEvents.add(identity);
+          if (eventTime > this._now()) {
+            playSound(sound, eventTime + this.startTimeSeconds, 1, 1);
+          } else {
+            console.warn('Dropped note:', sound, time, eventTime);
+          }
         }
       }
     });
