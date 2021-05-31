@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import HorizontalGrid from './HorizontalGrid.jsx';
-import SoundGrid from './SoundGrid.jsx';
-import HitsGrid from './HitsGrid.jsx';
-import RatioBox from './RatioBox.jsx';
 import Header from './Header.jsx';
 import Line from './Line.jsx';
-import { updateArray } from '../util.js';
-import interpretPart from '../interpreter.js';
+import { SoundGrid, HitsGrid, RatioBox, componentTypes} from './componentTypes.js';
 import Node from '../node.js';
 import RatioNode from '../rationode.js';
 import HitsNode from '../hitsnode.js';
@@ -24,10 +19,6 @@ const addSoundGrid = ({ audio, gui }, sound) => () => {
   gui.updateCoords(node.id)([500, 500]);
   audio.scheduler.addPart(node);
   audio.setNodes({ ...audio.nodes, [node.id]: node });
-};
-
-const Components = {
-  'node': SoundGrid, 'ratioNode': RatioBox, 'hitsNode': HitsGrid,
 };
 
 const soundTypes = ['hat', 'ride', 'rim', 'kick'];
@@ -53,7 +44,7 @@ const App = (props) => {
 
       <div className="canvas">
         {Object.values(audio.nodes).map(n => {
-          const Component = Components[n.type];
+          const Component = componentTypes[n.type];
           return (<Component
             key={n.id} node={n}
             label={n?.label || n._aspects.sounds[0]}

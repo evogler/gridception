@@ -6,7 +6,6 @@ function useForceUpdate() {
 }
 
 const useGui = (audio) => {
-
   const [actives, setActives] = useState(Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
   audio.scheduler.addTimeListener((time) => setCurrentTime(time));
