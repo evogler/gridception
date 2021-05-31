@@ -26,7 +26,6 @@ class Node {
     }
     this._sounding = true;
     this._timeCache = [];
-    // console.log('Creating new Node', this.id);
   }
 
   toJson() {
@@ -97,7 +96,6 @@ class Node {
     times.forEach(time => this._absoluteTimes.push(this._absoluteTimes.slice(-1)[0] + time));
     this._timePeriod = this._absoluteTimes.pop();
     this._resetTimeCache();
-    // this._children.forEach(ch => ch._resetTimeCache());
     log('setAbsoluteTimes done', this._timeCache);
   }
 
@@ -115,11 +113,9 @@ class Node {
     log('resetTimeCache', this.label);
     this._timeCache = [];
     this._children.map(ch => ch._resetTimeCache());
-    // console.log('reset time cache', this.id);
   }
 
   _extendTimeCache(endTime) {
-    // debugger;
     log('extendTimeCache', endTime, this._timeCache);
     let max = 100;
     while (endTime >= (this._timeCache.slice(-1)[0] ?? 0)
@@ -132,22 +128,15 @@ class Node {
       if (newTime === undefined) { debugger; }
       this._timeCache.push(newTime);
       max -= 1;
-      if (!max) {
-        console.log('extendTimeCache maxed out',
-          endTime,
-          'this._timeCache.slice(-1)[0]', this._timeCache.slice(-1)[0],
-          'this._timeCache.length', this._timeCache.length,
-          );
-        if (this._timeCache.slice(-1)[0] === undefined) {
-          // debugger;
-        }
-        return;
-      }
+      // if (!max) {
+      //   console.log('extendTimeCache maxed out',
+      //     endTime,
+      //     'this._timeCache.slice(-1)[0]', this._timeCache.slice(-1)[0],
+      //     'this._timeCache.length', this._timeCache.length,
+      //     );
+      //   return;
+      // }
     }
-    // console.log('extendTimeCache finished normally',
-    //   'endTime:', endTime,
-    //   'this._timeCache.slice(-1)[0]', this._timeCache.slice(-1)[0],
-    // );
   }
 
   _getAspectsAtIndex(index, aspects) {

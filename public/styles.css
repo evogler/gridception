@@ -116,10 +116,14 @@ button {
 }
 
 .grid-cell-active {
-  /* box-shadow: 0 0 3px 2px blueviolet; */
   background-color: #0d0;
   transition: 0s;
 }
+
+.grid-cell-active-off  {
+  background-color: #fff8;
+}
+
 
 .line {
   padding: 0;

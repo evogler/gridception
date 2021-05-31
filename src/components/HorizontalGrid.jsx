@@ -37,7 +37,9 @@ const HorizontalGrid = (props) => {
       <span onClick={shorten}>-</span>
       <span onClick={toggleMute}>m</span>
       {status.map((_, i) => (
-        <GridCell key={i} index={i} status={status[i]} active={i === active && status[i] === 'on'} click={() => {update(i); forceUpdate();}} />
+        <GridCell key={i} index={i} status={status[i]}
+        active={i === active /* &&  status[i] === 'on' */}
+        click={() => {update(i); forceUpdate();}} />
       ))}
     </ div>
   );

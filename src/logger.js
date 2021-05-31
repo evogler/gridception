@@ -3,8 +3,8 @@ class Logger {
     this.reset();
     this._triggers = {
       // resetTimeCache: 1,
-      event: 100,
-      getEventsInTimeWindow: 1,
+      // event: 100,
+      // getEventsInTimeWindow: 1,
     };
   }
 

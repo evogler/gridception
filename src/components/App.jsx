@@ -139,13 +139,14 @@ const App = (props) => {
 
   const forceUpdate = useForceUpdate();
 
-  const addNode = () => {
+  const addSoundGrid = () => {
     const node = new Node();
-    node.label = 'hat 2';
+    node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
+    node.label = 'new node';
     node.setParent(nodes[5]);
     node._coords = [500, 500];
+    updateCoords(node.id)([500, 500]);
     node._setAbsoluteTimes();
-    console.log('addNode, nodes', nodes, 'node', node);
     scheduler.addPart(node);
     setNodes({ ...nodes, [node.id]: node });
   };
@@ -158,7 +159,7 @@ const App = (props) => {
         save={save}
         setBpm={setBpm}
       />
-      <button onClick={addNode}>NEW NODE</button>
+      <button onClick={addSoundGrid}>NEW NODE</button>
 
       <div className="canvas">
         {Object.values(nodes).map(n => {
@@ -187,10 +188,12 @@ const App = (props) => {
             )
           }
         })}
-        <Line coords={[...parentCoords(0), ...childCoords(1)]} />
-        <Line coords={[...parentCoords(5), ...childCoords(2)]} />
-        <Line coords={[...parentCoords(0), ...childCoords(3)]} />
-        <Line coords={[...parentCoords(5), ...childCoords(4)]} />
+        {Object.values(nodes).map(node => node._parent && (
+          <Line coords={[
+            ...parentCoords(node._parent.id),
+            ...childCoords(node.id)
+          ]} />
+        ))}
       </div>
     </div>
   );
