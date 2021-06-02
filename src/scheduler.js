@@ -125,9 +125,10 @@ class Scheduler {
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
       if (setActive) {
-        const delay = (eventTime - this.startTimeSeconds) * 1000;
-        const visualOffset = 1;
-        setActive();
+        const extraVisualDelay = 100;
+        const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
+        // console.log( 'eventTime', eventTime, 'startRealTime', startRealTime, 'delay', delay,);
+        setTimeout(setActive, delay);
       }
 
       log.log('event');

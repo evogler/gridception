@@ -174,7 +174,7 @@ class Node {
       const event = this._getAspectsAtIndex(i, aspects);
       event.time = this._timeCache[i];
       event.setActive = () => {
-        const activeIdx = (i % this._aspects.statuses.length);
+        const activeIdx = ((i + 1) % this._aspects.statuses.length);
         if (this._activeListener) {
           this._activeListener(activeIdx);
         }
