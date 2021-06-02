@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header.jsx';
 import Line from './Line.jsx';
 import { SoundGrid, HitsGrid, RatioBox, componentTypes} from './componentTypes.js';
-import Node from '../node.js';
-import RatioNode from '../rationode.js';
-import HitsNode from '../hitsnode.js';
+import { Node, RatioNode, HitsNode } from './nodeTypes.js';
 import { jsonData, loadFromJson } from './fromJson.js';
-import useGui from './useGui.js';
+import useGui from './gui.jsx';
 import useAudioEngine from './useAudioEngine.js';
 
 const addSoundGrid = ({ audio, gui }, sound) => () => {
