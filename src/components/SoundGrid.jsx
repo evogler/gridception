@@ -8,7 +8,7 @@ const SoundGrid = ({ label, node, coords, updateCoords, forceUpdate }) => {
 
   useEffect(() => {
     node.setActiveListener(setActive);
-  }, []);
+  }, [node]);
 
   return (
     <HorizontalGrid

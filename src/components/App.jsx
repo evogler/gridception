@@ -35,6 +35,9 @@ const App = (props) => {
     gui.setCoords(coords);
     audio.setNodes(nodes);
     console.log('gui.coords', gui.coords);
+    gui.setActives(
+      Object.fromEntries(Object.values(nodes).map(node => [node.id, 0]))
+    );
     window.nodes = nodes;
     console.log('loadFunky completed.');
   };
