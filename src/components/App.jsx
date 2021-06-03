@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header.jsx';
 import Line from './Line.jsx';
-import { SoundGrid, HitsGrid, RatioBox, componentTypes} from './componentTypes.js';
+import { SoundGrid, HitsGrid, RatioBox, componentTypes } from './componentTypes.js';
 import { Node, RatioNode, HitsNode } from './nodeTypes.js';
-import { jsonData, loadFromJson } from './fromJson.js';
+import { funkyBeatStr, jazzRideStr, loadFromJson } from './fromJson.js';
 import useGui from './gui.jsx';
 import useAudioEngine from './useAudioEngine.js';
 
@@ -25,6 +25,20 @@ const App = (props) => {
   const audio = useAudioEngine();
   const gui = useGui(audio);
 
+  const loadSong = (songJsonStr) => () => {
+    const json = JSON.parse(songJsonStr);
+    const nodes = loadFromJson(json, audio.scheduler);
+    const coords = Object.fromEntries(
+      Object.entries(nodes).map(([k, v]) => [k, v._coords])
+    );
+    console.log('new coords', coords);
+    gui.setCoords(coords);
+    audio.setNodes(nodes);
+    console.log('gui.coords', gui.coords);
+    window.nodes = nodes;
+    console.log('loadFunky completed.');
+  };
+
   return (
     <div id="app" >
       <Header
@@ -39,6 +53,9 @@ const App = (props) => {
           NEW {sound.toUpperCase()}
         </button>
       ))}
+
+      <button onClick={loadSong(jazzRideStr)}>LOAD JAZZ</button>
+      <button onClick={loadSong(funkyBeatStr)}>LOAD FUNKY BEAT</button>
 
       <div className="canvas">
         {Object.values(audio.nodes).map(n => {

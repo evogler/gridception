@@ -6,7 +6,7 @@ function useForceUpdate() {
 }
 
 const useGui = (audio) => {
-  const [actives, setActives] = useState(Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
+  const [actives, setActives] = useState(() => Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
   audio.scheduler.addTimeListener((time) => setCurrentTime(time));
   const updateActive = id => (id, val) => {
@@ -24,6 +24,7 @@ const useGui = (audio) => {
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
   const childCoords = id => {
+    console.log('in childCoords', id, coords);
     if ([0, 5].includes(id)) {
       return [coords[id][0] + 15, coords[id][1] + 12];
     }
@@ -31,8 +32,8 @@ const useGui = (audio) => {
   }
   const forceUpdate = useForceUpdate();
   return {
-    actives, setActives, currentTime, setCurrentTime, updateActive,
-    buttonClick, updateCoords, childCoords, parentCoords, forceUpdate,
+    actives, setActives, currentTime, setCurrentTime, updateActive, buttonClick,
+    updateCoords, setCoords, coords, childCoords, parentCoords, forceUpdate,
   };
 };
 

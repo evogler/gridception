@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Scheduler from '../scheduler.js';
-import { jsonData, loadFromJson } from './fromJson.js';
+import { jazzRideStr, loadFromJson } from './fromJson.js';
 
 const useAudioEngine = () => {
   const [scheduler] = useState(() => new Scheduler());
-  const [nodes, setNodes] = useState(() => loadFromJson(jsonData, scheduler));
+  const [nodes, setNodes] = useState(() => loadFromJson(JSON.parse(jazzRideStr), scheduler));
   useEffect(() => { window.nodes = nodes; }, []);
   const setBpm = bpm => { scheduler.setBpm(bpm); }
   const save = () => {
