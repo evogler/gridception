@@ -10,7 +10,7 @@ const RatioBox = ({ label, node, coords = [0, 0], updateCoords }) => {
   return (
     <div className="ratio-box" style={{ left: x, top: y }} >
       <DragIcon startDrag={drag} />
-      <span className="horizontal-grid-label">{label}:</span>
+      <span className="horizontal-grid-label">{label}</span>
       <textarea
         onChange={e => {
           node.setTime(e.target.value);

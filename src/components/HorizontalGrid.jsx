@@ -32,10 +32,10 @@ const HorizontalGrid = (props) => {
       style={{ left: x, top: y }}
     >
       <DragIcon startDrag={drag} />
-      <span className="horizontal-grid-label">{label}:</span>
-      <span onClick={lengthen}>+</span>
-      <span onClick={shorten}>-</span>
-      <span onClick={toggleMute}>m</span>
+      <span className="horizontal-grid-label">{label}</span>
+      <span className="grid-button" onClick={lengthen}>+</span>
+      <span className="grid-button" onClick={shorten}>-</span>
+      <span className="grid-button" onClick={toggleMute}>m</span>
       {status.map((_, i) => (
         <GridCell key={i} index={i} status={status[i]}
         active={i === active /* &&  status[i] === 'on' */}
