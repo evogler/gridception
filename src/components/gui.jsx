@@ -24,7 +24,6 @@ const useGui = (audio) => {
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
   const childCoords = id => {
-    console.log('in childCoords', id, coords);
     if ([0, 5].includes(id)) {
       return [coords[id][0] + 15, coords[id][1] + 12];
     }
