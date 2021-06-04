@@ -14,7 +14,7 @@ const HorizontalGrid = (props) => {
   // console.log('new HorizontalGrid props:', props);
 
   startCoords = node._coords ? node._coords : startCoords;
-  const [x, y, drag] = useDrag(...startCoords, node, updateCoords);
+  const [x, y, drag] = useDrag(...startCoords, node);
 
   const [muted, setMuted] = useState(false);
   const toggleMute = () => {
