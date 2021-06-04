@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const useDrag = (startX = 0, startY = 0, node = null, updateCoords = null) => {
+const useDrag = (startX = 0, startY = 0, node = null, updateCoords = null ) => {
   const [coords, setCoords] = useState([startX, startY]);
   const [dragging, setDragging] = useState(false);
 
@@ -34,7 +34,7 @@ const useDrag = (startX = 0, startY = 0, node = null, updateCoords = null) => {
     document.addEventListener('mousemove', handleMouseMove, false);
   };
 
-  return [ ...coords, startDrag];
+  return [ ...coords, startDrag, setCoords ];
 }
 
 export default useDrag;

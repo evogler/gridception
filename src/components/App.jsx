@@ -25,12 +25,19 @@ const App = (props) => {
   const audio = useAudioEngine();
   const gui = useGui(audio);
 
+  // changing keyOffset is a way to force React to unmount old components
+  const [keyOffset, setKeyOffset] = useState(0);
+
   const loadSong = (songJsonStr) => () => {
     const json = JSON.parse(songJsonStr);
     const nodes = loadFromJson(json, audio.scheduler);
     const coords = Object.fromEntries(
       Object.entries(nodes).map(([k, v]) => [k, v._coords])
     );
+    // let coords = [...new Array(10)].fill(0);
+    // coords = coords.map((_, idx) => [idx, [100, 100]]);
+    // console.log('new coords', coords);
+    // coords = Object.fromEntries(coords);
     console.log('new coords', coords);
     gui.setCoords(coords);
     audio.setNodes(nodes);
@@ -38,6 +45,7 @@ const App = (props) => {
     gui.setActives(
       Object.fromEntries(Object.values(nodes).map(node => [node.id, 0]))
     );
+    setKeyOffset(n => n + 10000);
     window.nodes = nodes;
     console.log('loadFunky completed.');
   };
@@ -64,7 +72,7 @@ const App = (props) => {
         {Object.values(audio.nodes).map(n => {
           const Component = componentTypes[n.type];
           return (<Component
-            key={n.id} node={n}
+            key={n.id + keyOffset} node={n}
             label={n?.label || n._aspects.sounds[0]}
             updateCoords={gui.updateCoords(n.id)}
             forceUpdate={gui.forceUpdate}
