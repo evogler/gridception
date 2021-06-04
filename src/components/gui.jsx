@@ -19,7 +19,7 @@ const useGui = (audio) => {
   const updateCoords = id => val => { setCoords({ ...coords, [id]: val }); };
   const parentCoords = id => {
     if ([0, 5].includes(id)) {
-      return [coords[id][0] + 254, coords[id][1] + 50];
+      return [coords[id][0] + 245, coords[id][1] + 55];
     }
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
