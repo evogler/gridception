@@ -4,7 +4,7 @@ body {
   box-sizing: border-box;
 }
 
-body, button, input, textarea {
+body, button, input, textarea, .loadsong-song {
   color: #333;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
@@ -205,4 +205,24 @@ input[type='range']::-webkit-slider-thumb {
   height: 16px;
   width: 8px;
   border: 0;
+}
+
+h4 {
+  padding-left: 1em;
+}
+
+.loadsong-song {
+  line-height: 2em;
+  padding: 1em;
+  background-color: #fff8;
+  border-top: 1px solid #888;
+  cursor: pointer;
+}
+
+.loadsong-song:last-child {
+  border-bottom: 1px solid #888;
+}
+
+.loadsong-song:hover {
+  background-color: #ccc8;
 }
