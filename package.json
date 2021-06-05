@@ -18,6 +18,8 @@
     "webpack-cli": "^4.7.0"
   },
   "scripts": {
-    "build": "webpack -w"
+    "build-dev": "webpack -w",
+    "build": "webpack",
+    "start": "live-server ./public"
   }
 }
