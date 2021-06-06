@@ -3,3 +3,4 @@ node_modules
 notes.txt
 public/main.js
 public/main.js.map
+package-lock.json
