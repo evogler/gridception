@@ -30,7 +30,7 @@ const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 const buffers = {};
 
-const sampleFolder = '/public/samples/';
+const sampleFolder = '/samples/';
 
 const onDecode = (buffer, fname) => {
   buffers[fname] = buffer;
