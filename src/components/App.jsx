@@ -22,6 +22,21 @@ const addSoundGrid = ({ audio, gui }, sound) => () => {
 
 const soundTypes = ['hat', 'ride', 'rim', 'kick'];
 
+const songs = [
+  {
+    title: 'Jazz ride',
+    json: jazzRideStr,
+  },
+  {
+    title: 'Prisencolinensinainciusol',
+    json: funkyBeatStr,
+  },
+  {
+   title: 'bossa',
+   json: bossaStr,
+  },
+];
+
 const App = (props) => {
   const [currentPage, setCurrentPage] = useState('LOAD');
   const audio = useAudioEngine();
@@ -54,32 +69,14 @@ const App = (props) => {
     setCurrentPage('LOAD');
   };
 
-  const [songs, setSongs] = useState([
-    {
-      title: 'Jazz ride',
-      json: jazzRideStr,
-    },
-    {
-      title: 'Prisencolinensinainciusol',
-      json: funkyBeatStr,
-    },
-    {
-     title: 'bossa',
-     json: bossaStr,
-    },
-  ]);
-
-  window.songs = songs;
-
   const setLoadedSong = (song) => {
     setCurrentPage('MAIN');
-    console.log(song.json);
     loadSong(song.json)();
   };
 
   const handleBpmChange = (bpm) => {
     updateBpm(bpm);
-    setBpm(bpm);
+    audio.setBpm(bpm);
   }
 
   return (

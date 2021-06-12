@@ -4,7 +4,7 @@ import { jazzRideStr, loadFromJson } from './fromJson.js';
 
 const useAudioEngine = () => {
   const [scheduler] = useState(() => new Scheduler());
-  const [nodes, setNodes] = useState(() => loadFromJson(JSON.parse(jazzRideStr).parts, scheduler));
+  const [nodes, setNodes] = useState(() => []);
   useEffect(() => { window.nodes = nodes; }, []);
   const setBpm = bpm => { scheduler.setBpm(bpm); }
   const save = () => {
