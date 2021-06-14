@@ -5,3 +5,4 @@ public/main.js
 public/main.js.map
 package-lock.json
 *.pem
+aws.sh

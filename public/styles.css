@@ -29,6 +29,10 @@ button {
   padding: 8px;
 }
 
+button:active {
+  background-color: #bbb;
+}
+
 .header {
   /* position: absolute; */
   width: 100%;
