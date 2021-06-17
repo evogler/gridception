@@ -1,5 +1,6 @@
 import { playSound, audioCtx } from './webaudio.js';
 import log from './logger.js';
+import eventBus from './eventbus.js';
 
 window.ac = audioCtx;
 
@@ -91,6 +92,7 @@ class Scheduler {
     for (const part of this.parts) {
       for (event of part.getEventsInTimeWindow(startTimeSeconds, endTime)) {
         event.sounding = part.sounding;
+        event.id = part.id;
         events.push(event);
       }
     }
@@ -124,12 +126,9 @@ class Scheduler {
       const setActive = e.setActive;
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
-      if (setActive) {
-        const extraVisualDelay = 100;
-        const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
-        // console.log( 'eventTime', eventTime, 'startRealTime', startRealTime, 'delay', delay,);
-        setTimeout(setActive, delay);
-      }
+      const extraVisualDelay = 100;
+      const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
+      setTimeout(() => eventBus.next(e), delay);
 
       log.log('event');
       if (status === 'on' && sounding) {

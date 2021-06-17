@@ -82,5 +82,3 @@ const loadFromJson = (jsonData, scheduler) => {
 };
 
 export { funkyBeatStr, jazzRideStr, bossaStr, loadFromJson };
-
-console.log('$@#$#', JSON.parse(funkyBeatStr).parts);

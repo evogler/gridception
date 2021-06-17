@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
+import eventBus from '../eventbus.js';
+import { filter } from 'rxjs/operators';
+
+window.eventBus = eventBus;
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
 
 const SoundGrid = ({ label, node, coords, updateCoords, forceUpdate }) => {
-  const [active, setActive] = useState(-1);
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     node.setActiveListener(setActive);
   }, [node]);
+
+  useEffect(() => {
+    eventBus.pipe(
+      filter(e => e.id === node.id)
+    ).subscribe(e => {
+      console.log('from soundgrid', e);
+      setActive(e.statusesIdx);
+    });
+  }, []);
 
   return (
     <HorizontalGrid

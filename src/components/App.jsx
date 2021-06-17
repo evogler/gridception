@@ -7,6 +7,7 @@ import { Node, RatioNode, HitsNode } from './nodeTypes.js';
 import { funkyBeatStr, jazzRideStr, bossaStr, loadFromJson } from './fromJson.js';
 import useGui from './gui.jsx';
 import useAudioEngine from './useAudioEngine.js';
+import eventBus from '../eventbus.js';
 
 const addSoundGrid = ({ audio, gui }, sound) => () => {
   const node = new Node();

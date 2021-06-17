@@ -145,8 +145,11 @@ class Node {
     const res = {};
     for (const aspect in this._aspects) {
       const arr = this._aspects[aspect];
-      res[aspect] = arr[index % arr.length];
+      const idx = index % arr.length
+      res[aspect] = arr[idx];
+      res[aspect + 'Idx'] = idx;
     }
+    res.index = index;
     return res;
   }
 
@@ -163,7 +166,7 @@ class Node {
   }
 
   getEventsInTimeWindow(startTime, endTime, aspects = null) {
-    log('getEventsInTimeWindow', startTime, endTime);
+    // console.log('getEventsInTimeWindow', startTime, endTime);
     this._extendTimeCache(endTime);
     const res = [];
     let i = this._timeCache.length - 1;
