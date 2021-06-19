@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { on } from '../eventbus.js';
+import { eventBus, on } from '../eventbus.js';
 
 function useForceUpdate() {
   const [value, setValue] = useState(0);
@@ -18,10 +18,9 @@ const useGui = (audio) => {
     // on('noteon', (e) => console.log(e));
   }, []);
 
-  const updateActive = id => (id, val) => {
-    setActives(acts => ({ ...acts, [id]: val }));
-  }
-  const buttonClick = () => { audio.scheduler.click(); };
+  // const buttonClick = () => { audio.scheduler.click(); };
+  const buttonClick = () => { eventBus.next({ code: 'playStop' }) };
+
   const [coords, setCoords] = useState(
     Object.fromEntries(Object.entries(audio.nodes).map(([k, v]) => [k, v._coords]))
   );
@@ -40,7 +39,7 @@ const useGui = (audio) => {
   }
   const forceUpdate = useForceUpdate();
   return {
-    actives, setActives, currentTime, setCurrentTime, updateActive, buttonClick,
+    actives, setActives, currentTime, setCurrentTime, buttonClick,
     updateCoords, setCoords, coords, childCoords, parentCoords, forceUpdate,
   };
 };

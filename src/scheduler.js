@@ -1,6 +1,6 @@
 import { playSound, audioCtx } from './webaudio.js';
 import log from './logger.js';
-import { eventBus} from './eventbus.js';
+import { eventBus, on } from './eventbus.js';
 
 window.ac = audioCtx;
 
@@ -17,6 +17,7 @@ class Scheduler {
     this.timeListeners = [];
     this.timePublishInterval = 50; // ms
     window.setBpm = this.setBpm.bind(this);
+    on('playStop', this.playStop.bind(this));
   }
 
   addPart(part) {
@@ -36,7 +37,7 @@ class Scheduler {
     this.startTimeSeconds = now;
   }
 
-  click() {
+  playStop() {
     if (!this.playing) {
       this.play();
     } else {
