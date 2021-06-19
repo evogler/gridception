@@ -5,29 +5,36 @@ import { filter } from 'rxjs/operators';
 
 window.eventBus = eventBus;
 
-const toggle = (x) => x === 'on' ? 'off' : 'on';
+const updated = (arr, idx, val) => {
+  const res = [...arr];
+  res[idx] = val;
+  return res;
+}
 
 const SoundGrid = ({ label, node, coords, updateCoords, forceUpdate }) => {
   const [active, setActive] = useState(0);
+
+  const [status, setStatus] = useState(() => node._aspects.statuses);
 
   useEffect(() => {
     node.setActiveListener(setActive);
   }, [node]);
 
   useEffect(() => {
-    eventBus.pipe(
-      filter(e => e.code === 'noteon' && e.event.id === node.id)
-    ).subscribe(({ event }) => {
-      setActive(event.statusesIdx);
-    });
+    eventBus.pipe(filter(e => e.code === 'noteon' && e.event.id === node.id))
+    .subscribe(({ event }) => setActive(event.statusesIdx));
+
+    eventBus.pipe(filter(e => e.code === 'setStatus' && e.id === node.id))
+    .subscribe((e) => setStatus(status => updated(status, e.index, e.status)));
   }, []);
 
   return (
     <HorizontalGrid
       label={label}
-      status={node._aspects.statuses}
-      update={i => {
-        node.updateIn('statuses', i, toggle);
+      status={status}
+      update={index => {
+        // node.updateIn('statuses', i, toggle);
+        eventBus.next({ code: 'toggleStatusButton', id: node.id, index })
       }}
       forceUpdate={forceUpdate}
       node={node}

@@ -1,6 +1,10 @@
 import { log } from './logger.js';
 import { uniqueId } from './util.js';
 import nodeDefaults from './nodedefaults.js';
+import { eventBus, on } from './eventbus.js';
+import { filter } from 'rxjs/operators';
+
+const toggle = (x) => x === 'on' ? 'off' : 'on';
 
 class Node {
   constructor({ times, jsonData } = {}) {
@@ -15,17 +19,19 @@ class Node {
       this._coords = coords;
       this.label = label;
       this.id = id;
-      return;
+    } else {
+      this._parent = null;
+      this._children = [];
+      this._aspects = nodeDefaults();
+      if (times) {
+        this._aspects.times = times;
+      }
+      this._sounding = true;
+      this._timeCache = [];
     }
-
-    this._parent = null;
-    this._children = [];
-    this._aspects = nodeDefaults();
-    if (times) {
-      this._aspects.times = times;
-    }
-    this._sounding = true;
-    this._timeCache = [];
+    eventBus.pipe(
+      filter(e => e.code === 'toggleStatusButton' && e.id === this.id)
+      ).subscribe(e => this.updateIn('statuses', e.index, toggle));
   }
 
   toJson() {
@@ -70,10 +76,12 @@ class Node {
   }
 
   updateIn(aspect, index, fn) {
-    this._aspects[aspect][index] = fn(this._aspects[aspect][index]);
+    const newStatus = fn(this._aspects[aspect][index]);
+    this._aspects[aspect][index] = newStatus;
     if (aspect === 'times') {
       this._setAbsoluteTimes();
     }
+    eventBus.next({ code: 'setStatus', index, id: this.id, status: newStatus });
   }
 
   lengthen() {
