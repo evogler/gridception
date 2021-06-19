@@ -1,6 +1,6 @@
 import { playSound, audioCtx } from './webaudio.js';
 import log from './logger.js';
-import eventBus from './eventbus.js';
+import { eventBus} from './eventbus.js';
 
 window.ac = audioCtx;
 
@@ -76,7 +76,8 @@ class Scheduler {
     const now = this.playing ? this._now() : this.pauseTime;
     let time = this._realTimeToMusicTime(now);
     time -= this.warmupTime / 1000;
-    this.timeListeners.forEach(fn => fn(time));
+    // this.timeListeners.forEach(fn => fn(time));
+    eventBus.next({ code: 'currentPlayTime', time });
     if (this.playing) {
       setTimeout(this._publishTimeLoop.bind(this), this.timePublishInterval);
     }
@@ -128,7 +129,7 @@ class Scheduler {
 
       const extraVisualDelay = 100;
       const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
-      setTimeout(() => eventBus.next(e), delay);
+      setTimeout(() => eventBus.next({ code: 'noteon', event: e }), delay);
 
       log.log('event');
       if (status === 'on' && sounding) {

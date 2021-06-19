@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { on } from '../eventbus.js';
 
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return () => setValue(value => value + 1);
 }
 
+
 const useGui = (audio) => {
   const [actives, setActives] = useState(() => Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
-  audio.scheduler.addTimeListener((time) => setCurrentTime(time));
+
+  // audio.scheduler.addTimeListener((time) => setCurrentTime(time));
+  // on('currentPlayTime', ({ time }) => setCurrentTime(time));
+  on('currentPlayTime', (({ time }) => setCurrentTime(time)));
+  useEffect(() => {
+    // on('noteon', (e) => console.log(e));
+  }, []);
+
   const updateActive = id => (id, val) => {
     setActives(acts => ({ ...acts, [id]: val }));
   }

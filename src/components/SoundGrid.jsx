@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
-import eventBus from '../eventbus.js';
+import { eventBus } from '../eventbus.js';
 import { filter } from 'rxjs/operators';
 
 window.eventBus = eventBus;
@@ -16,10 +16,9 @@ const SoundGrid = ({ label, node, coords, updateCoords, forceUpdate }) => {
 
   useEffect(() => {
     eventBus.pipe(
-      filter(e => e.id === node.id)
-    ).subscribe(e => {
-      console.log('from soundgrid', e);
-      setActive(e.statusesIdx);
+      filter(e => e.code === 'noteon' && e.event.id === node.id)
+    ).subscribe(({ event }) => {
+      setActive(event.statusesIdx);
     });
   }, []);
 
