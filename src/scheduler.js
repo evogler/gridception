@@ -18,6 +18,7 @@ class Scheduler {
     this.timePublishInterval = 50; // ms
     window.setBpm = this.setBpm.bind(this);
     on('playStop', this.playStop.bind(this));
+    on('setBpm', ({ bpm }) => this.setBpm(bpm));
   }
 
   addPart(part) {

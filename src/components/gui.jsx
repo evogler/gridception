@@ -11,14 +11,8 @@ const useGui = (audio) => {
   const [actives, setActives] = useState(() => Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
   const [currentTime, setCurrentTime] = useState(0);
 
-  // audio.scheduler.addTimeListener((time) => setCurrentTime(time));
-  // on('currentPlayTime', ({ time }) => setCurrentTime(time));
   on('currentPlayTime', (({ time }) => setCurrentTime(time)));
-  useEffect(() => {
-    // on('noteon', (e) => console.log(e));
-  }, []);
 
-  // const buttonClick = () => { audio.scheduler.click(); };
   const buttonClick = () => { eventBus.next({ code: 'playStop' }) };
 
   const [coords, setCoords] = useState(
@@ -38,6 +32,7 @@ const useGui = (audio) => {
     return [coords[id][0] + 12, coords[id][1] + 12];
   }
   const forceUpdate = useForceUpdate();
+
   return {
     actives, setActives, currentTime, setCurrentTime, buttonClick,
     updateCoords, setCoords, coords, childCoords, parentCoords, forceUpdate,
