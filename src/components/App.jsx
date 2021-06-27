@@ -7,42 +7,37 @@ import { Node, RatioNode, HitsNode } from './nodeTypes.js';
 import { funkyBeatStr, jazzRideStr, bossaStr, loadFromJson } from './fromJson.js';
 import useGui from './gui.jsx';
 import useAudioEngine from './useAudioEngine.js';
-import { eventBus } from '../eventbus.js';
+import { eventBus, on } from '../eventbus.js';
+import graph from '../graph.js';
 
-const addSoundGrid = ({ audio, gui }, sound) => () => {
-  const node = new Node();
-  node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
-  node.set('sounds', [sound]);
-  node.label = `new ${sound}`;
-  node.setParent(nodes[5]);
-  node._coords = [500, 500];
-  gui.updateCoords(node.id)([500, 500]);
-  audio.scheduler.addPart(node);
-  audio.setNodes({ ...audio.nodes, [node.id]: node });
+const addSoundGrid = (sound) => {
+  eventBus.next({ code: 'newSoundGrid', sound });
 };
+
+
+on('setAspect', (event) => {
+
+})
+
+// const _addSoundGrid = ({ audio, gui }, sound) => () => {
+//   node.label = `new ${sound}`;
+//   node.setParent(nodes[5]);
+//   node._coords = [500, 500];
+//   gui.updateCoords(node.id)([500, 500]);
+// };
 
 const soundTypes = ['hat', 'ride', 'rim', 'kick'];
 
-const songs = [
-  {
-    title: 'Jazz ride',
-    json: jazzRideStr,
-  },
-  {
-    title: 'Prisencolinensinainciusol',
-    json: funkyBeatStr,
-  },
-  {
-   title: 'bossa',
-   json: bossaStr,
-  },
-];
-
 const App = (props) => {
-  const [currentPage, setCurrentPage] = useState('LOAD');
+  const [currentPage, setCurrentPage] = useState('MAIN');
   const audio = useAudioEngine();
   const gui = useGui(audio);
 
+  const [components, setComponents] = useState({});
+  on('soundGridCreated', (event) => {
+    console.log(event);
+    setComponents(components => ({ ...components, [event.id]: { type: 'soundGrid' }}));
+  });
   const [bpm, updateBpm] = useState(400);
 
   // changing keyOffset is a way to force React to unmount old components
@@ -55,7 +50,7 @@ const App = (props) => {
       Object.entries(nodes).map(([k, v]) => [k, v._coords])
     );
     gui.setCoords(coords);
-    audio.setNodes(nodes);
+    graph.nodes = nodes;
     audio.setBpm(json.bpm);
     updateBpm(json.bpm);
     gui.setActives(
@@ -70,10 +65,10 @@ const App = (props) => {
     setCurrentPage('LOAD');
   };
 
-  const setLoadedSong = (song) => {
-    setCurrentPage('MAIN');
-    loadSong(song.json)();
-  };
+  // const setLoadedSong = (song) => {
+  //   setCurrentPage('MAIN');
+  //   loadSong(song.json)();
+  // };
 
   const handleBpmChange = (bpm) => {
     updateBpm(bpm);
@@ -94,12 +89,16 @@ const App = (props) => {
       {currentPage === 'MAIN' && (
         <>
           {soundTypes.map(sound => (
-            <button onClick={addSoundGrid({ audio, gui }, sound)}>
+            <button onClick={() => addSoundGrid(sound)}>
               NEW {sound.toUpperCase()}
             </button>
           ))}
-
           <div className="canvas">
+            {Object.values(components).map(component => (
+              <div>{component.type}</div>
+            ))}
+          </div>
+          {/* <div className="canvas">
             {Object.values(audio.nodes).map(n => {
               const Component = componentTypes[n.type];
               return (<Component
@@ -116,7 +115,7 @@ const App = (props) => {
                 ...gui.childCoords(node.id)
               ]} />
             ))}
-          </div>
+          </div> */}
         </>
       )}
 

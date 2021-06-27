@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { eventBus, on } from '../eventbus.js';
 
+import graph from '../graph.js';
+
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return () => setValue(value => value + 1);
@@ -8,7 +10,7 @@ function useForceUpdate() {
 
 
 const useGui = (audio) => {
-  const [actives, setActives] = useState(() => Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
+  const [actives, setActives] = useState(() => Object.fromEntries(graph.allNodes()));
   const [currentTime, setCurrentTime] = useState(0);
 
   on('currentPlayTime', (({ time }) => setCurrentTime(time)));
@@ -16,7 +18,7 @@ const useGui = (audio) => {
   const buttonClick = () => { eventBus.next({ code: 'playStop' }) };
 
   const [coords, setCoords] = useState(
-    Object.fromEntries(Object.entries(audio.nodes).map(([k, v]) => [k, v._coords]))
+    Object.fromEntries(Object.entries(graph._nodes).map(([k, v]) => [k, v._coords]))
   );
   const updateCoords = id => val => { setCoords({ ...coords, [id]: val }); };
   const parentCoords = id => {

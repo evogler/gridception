@@ -12,7 +12,8 @@ const on = (code, fn) =>
     .pipe(filter(e => e.code === code))
     .subscribe(fn);
 
-const ebTest = () => console.log('***EBTEST***');
+const send = (code, obj) => {
+  eventBus.next({ code, ...obj });
+};
 
-
-export { eventBus, on, ebTest };
+export { eventBus, on, send };

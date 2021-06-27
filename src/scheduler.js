@@ -5,10 +5,10 @@ import { eventBus, on } from './eventbus.js';
 window.ac = audioCtx;
 
 class Scheduler {
-  constructor() {
+  constructor(graph) {
     this.audioCtx = audioCtx;
     this.bpm = 400;
-    this.parts = [];
+    this.graph = graph;
     this.eventLoopPeriod = 50; // ms
     this.eventBufferSize = 200; // ms
     this.warmupTime = 115; // ms offset at start to allow first notes to play;
@@ -19,16 +19,6 @@ class Scheduler {
     window.setBpm = this.setBpm.bind(this);
     on('playStop', this.playStop.bind(this));
     on('setBpm', ({ bpm }) => this.setBpm(bpm));
-  }
-
-  addPart(part) {
-    this.parts.push(part);
-    console.log('scheduler.addPart', part);
-  }
-
-  reset() {
-    this.parts = [];
-    this.timeListeners = [];
   }
 
   setBpm(bpm) {
@@ -92,7 +82,7 @@ class Scheduler {
 
   _getEventsInWindow(startTimeSeconds, endTime) {
     let events = [];
-    for (const part of this.parts) {
+    for (const part of this.graph.allNodes()) {
       for (event of part.getEventsInTimeWindow(startTimeSeconds, endTime)) {
         event.sounding = part.sounding;
         event.id = part.id;
