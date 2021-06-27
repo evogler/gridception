@@ -27,4 +27,4 @@ const send = (code, obj) => {
 
 export { eventBus, on, onId, send };
 
-// eventBus.subscribe(e => console.log('EB', e));
+eventBus.subscribe(e => console.log('EB', e));

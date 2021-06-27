@@ -33,7 +33,7 @@ const HorizontalGrid = (props) => {
       {status.map((_, i) => (
         <GridCell key={i} index={i} status={status[i]}
         active={i === active /* &&  status[i] === 'on' */}
-        click={() => {update(i); forceUpdate();}} />
+        click={() => {update(i); /* forceUpdate() */;}} />
       ))}
     </ div>
   );

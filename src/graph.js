@@ -33,14 +33,23 @@ on('newSoundGrid', (event) => {
     send('setAspect', { id: node.id, aspect: 'sounds', values: [event.sound] });
     const statuses = ['on', ...new Array(Math.floor(Math.random() * 5 + 3)).fill('off')];
     send('setAspect', { id: node.id, aspect: 'statuses', values: statuses });
-    console.log('delayed graph stuff completed');
   }, 0);
 
 });
 
 on('setAspect', (event) => {
   const { id, aspect, values } = event;
-  graph.get(id).set(aspect, values);
+  graph.get(id).set(aspect, [...values]);
+});
+
+on('lengthen', ({ id }) => {
+  graph.get(id).lengthen();
+  send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
+});
+
+on('shorten', ({ id }) => {
+  graph.get(id).shorten();
+  send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
 });
 
 export default graph;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
-import { eventBus, on, onId } from '../eventbus.js';
+import { eventBus, on, onId, send } from '../eventbus.js';
 import { filter } from 'rxjs/operators';
 
 window.eventBus = eventBus;
@@ -17,20 +17,21 @@ const SoundGrid = ({ id, label = 'temp' }) => {
   const [status, setStatus] = useState(() => ['off', 'off']);
 
   // useEffect(() => {
-    // node.setActiveListener(setActive);
+  // node.setActiveListener(setActive);
   // }, [node]);
 
   useEffect(() => {
     onId(id, 'noteon', (event) => setActive(event.statusesIdx));
     onId(id, 'setStatus', (e) => setStatus(status => updated(status, e.index, e.status)));
+    window.aspectCount = 0;
     onId(id, 'setAspect', (e) => {
       if (e.aspect === 'statuses') { setStatus(e.values); }
     });
   }, []);
 
-  const lengthen = () => {console.log('lengthen')};
-  const shorten = () => {console.log('shorten')};
-  const mute = () => {console.log('mute')};
+  const lengthen = () => { send('lengthen', { id }) };
+  const shorten = () => { send('shorten', { id }) };
+  const mute = () => { console.log('mute') };
 
   return (
     <HorizontalGrid
@@ -38,7 +39,7 @@ const SoundGrid = ({ id, label = 'temp' }) => {
       status={status}
       update={index => {
         // node.updateIn('statuses', i, toggle);
-        eventBus.next({ code: 'toggleStatusButton', id: node.id, index })
+        eventBus.next({ code: 'toggleStatusButton', id, index })
       }}
       // forceUpdate={forceUpdate}
       // node={node}
