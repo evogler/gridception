@@ -34,32 +34,34 @@ const App = (props) => {
   const gui = useGui(audio);
 
   const [components, setComponents] = useState({});
-  on('soundGridCreated', (event) => {
-    console.log(event);
-    setComponents(components => ({ ...components, [event.id]: { type: 'soundGrid' }}));
-  });
+  useEffect(() => {
+    on('soundGridCreated', (event) => {
+      console.log(event);
+      setComponents(components => ({ ...components, [event.id]: { type: 'soundGrid' } }));
+    });
+  }, []);
   const [bpm, updateBpm] = useState(400);
 
   // changing keyOffset is a way to force React to unmount old components
   const [keyOffset, setKeyOffset] = useState(0);
 
-  const loadSong = (songJsonStr) => () => {
-    const json = JSON.parse(songJsonStr);
-    const nodes = loadFromJson(json.parts, audio.scheduler);
-    const coords = Object.fromEntries(
-      Object.entries(nodes).map(([k, v]) => [k, v._coords])
-    );
-    gui.setCoords(coords);
-    graph.nodes = nodes;
-    audio.setBpm(json.bpm);
-    updateBpm(json.bpm);
-    gui.setActives(
-      Object.fromEntries(Object.values(nodes).map(node => [node.id, 0]))
-    );
-    setKeyOffset(n => n + 10000);
-    window.nodes = nodes;
-    console.log('loadSong completed.');
-  };
+  /*   const loadSong = (songJsonStr) => () => {
+      const json = JSON.parse(songJsonStr);
+      const nodes = loadFromJson(json.parts, audio.scheduler);
+      const coords = Object.fromEntries(
+        Object.entries(nodes).map(([k, v]) => [k, v._coords])
+      );
+      gui.setCoords(coords);
+      graph.nodes = nodes;
+      audio.setBpm(json.bpm);
+      updateBpm(json.bpm);
+      gui.setActives(
+        Object.fromEntries(Object.values(nodes).map(node => [node.id, 0]))
+      );
+      setKeyOffset(n => n + 10000);
+      window.nodes = nodes;
+      console.log('loadSong completed.');
+    }; */
 
   const handleLoadButton = () => {
     setCurrentPage('LOAD');
@@ -94,9 +96,11 @@ const App = (props) => {
             </button>
           ))}
           <div className="canvas">
-            {Object.values(components).map(component => (
-              <div>{component.type}</div>
-            ))}
+            {Object.entries(components).map(([id, component]) =>
+              component.type === 'soundGrid'
+                ? <SoundGrid id={Number(id)} />
+                : <div>{component.type}</div>
+            )}
           </div>
           {/* <div className="canvas">
             {Object.values(audio.nodes).map(n => {

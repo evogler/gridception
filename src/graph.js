@@ -29,9 +29,12 @@ on('newSoundGrid', (event) => {
   const node = new Node();
   graph.addNode(node);
   send('soundGridCreated', { id: node.id });
-  send('setAspect', { id: node.id, aspect: 'sounds', values: [event.sound] });
-  const statuses = ['on', ...new Array(Math.floor(Math.random() * 5 + 3)).fill('off')];
-  send('setAspect', { id: node.id, aspect: 'statuses', values: statuses });
+  setTimeout(() => {
+    send('setAspect', { id: node.id, aspect: 'sounds', values: [event.sound] });
+    const statuses = ['on', ...new Array(Math.floor(Math.random() * 5 + 3)).fill('off')];
+    send('setAspect', { id: node.id, aspect: 'statuses', values: statuses });
+    console.log('delayed graph stuff completed');
+  }, 0);
 
 });
 

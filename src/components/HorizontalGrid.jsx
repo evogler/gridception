@@ -4,11 +4,11 @@ import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
 const HorizontalGrid = (props) => {
-  let { status, update, forceUpdate, label, node, active,
-    startCoords, updateCoords, lengthen, shorten, mute } = props;
+  let { status, update, label, active, startCoords,
+    lengthen, shorten, mute } = props;
 
-  startCoords = node._coords ? node._coords : startCoords;
-  const [x, y, drag] = useDrag(...startCoords, node, updateCoords);
+  // startCoords = node._coords ? node._coords : startCoords;
+  const [x, y, drag] = [...startCoords, console.log];
 
   const [muted, setMuted] = useState(false);
   const toggleMute = () => {
@@ -16,9 +16,9 @@ const HorizontalGrid = (props) => {
     setMuted(!muted);
   };
 
-  useEffect(() => {
-    console.log(node?.label, node?.type, node?._aspects?.statuses);
-  }, []);
+  // useEffect(() => {
+    // console.log(node?.label, node?.type, node?._aspects?.statuses);
+  // }, []);
 
   return (
     <div

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
-import { eventBus } from '../eventbus.js';
+import { eventBus, on, onId } from '../eventbus.js';
 import { filter } from 'rxjs/operators';
 
 window.eventBus = eventBus;
@@ -11,39 +11,43 @@ const updated = (arr, idx, val) => {
   return res;
 }
 
-const SoundGrid = ({ label, node, coords, updateCoords, forceUpdate }) => {
-  const [active, setActive] = useState(0);
+const SoundGrid = ({ id, label = 'temp' }) => {
+  const [active, setActive] = useState(-1);
 
-  const [status, setStatus] = useState(() => node._aspects.statuses);
+  const [status, setStatus] = useState(() => ['off', 'off']);
+
+  // useEffect(() => {
+    // node.setActiveListener(setActive);
+  // }, [node]);
 
   useEffect(() => {
-    node.setActiveListener(setActive);
-  }, [node]);
-
-  useEffect(() => {
-    eventBus.pipe(filter(e => e.code === 'noteon' && e.event.id === node.id))
-    .subscribe(({ event }) => setActive(event.statusesIdx));
-
-    eventBus.pipe(filter(e => e.code === 'setStatus' && e.id === node.id))
-    .subscribe((e) => setStatus(status => updated(status, e.index, e.status)));
+    onId(id, 'noteon', (event) => setActive(event.statusesIdx));
+    onId(id, 'setStatus', (e) => setStatus(status => updated(status, e.index, e.status)));
+    onId(id, 'setAspect', (e) => {
+      if (e.aspect === 'statuses') { setStatus(e.values); }
+    });
   }, []);
+
+  const lengthen = () => {console.log('lengthen')};
+  const shorten = () => {console.log('shorten')};
+  const mute = () => {console.log('mute')};
 
   return (
     <HorizontalGrid
-      label={label}
+      label={id}
       status={status}
       update={index => {
         // node.updateIn('statuses', i, toggle);
         eventBus.next({ code: 'toggleStatusButton', id: node.id, index })
       }}
-      forceUpdate={forceUpdate}
-      node={node}
+      // forceUpdate={forceUpdate}
+      // node={node}
       active={active}
-      startCoords={coords}
-      updateCoords={updateCoords}
-      lengthen={node.lengthen.bind(node)}
-      shorten={node.shorten.bind(node)}
-      mute={() => node.setSounding(!node.sounding)}
+      startCoords={[100, 150 + 100 * id]}
+      updateCoords={console.log}
+      lengthen={lengthen}
+      shorten={shorten}
+      mute={mute}
     />
   );
 };

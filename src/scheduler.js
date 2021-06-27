@@ -121,7 +121,7 @@ class Scheduler {
 
       const extraVisualDelay = 100;
       const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
-      setTimeout(() => eventBus.next({ code: 'noteon', event: e }), delay);
+      setTimeout(() => eventBus.next({ code: 'noteon', ...e }), delay);
 
       log.log('event');
       if (status === 'on' && sounding) {
