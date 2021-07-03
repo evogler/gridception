@@ -7,24 +7,18 @@ import { Node, RatioNode, HitsNode } from './nodeTypes.js';
 import { funkyBeatStr, jazzRideStr, bossaStr, loadFromJson } from './fromJson.js';
 import useGui from './gui.jsx';
 import useAudioEngine from './useAudioEngine.js';
-import { eventBus, on } from '../eventbus.js';
+import { send, on, onId } from '../eventbus.js';
 import graph from '../graph.js';
 
 const addSoundGrid = (sound) => {
-  eventBus.next({ code: 'newSoundGrid', sound });
+  send('newSoundGrid', { sound } );
 };
 
+const addRatioBox = () => {
+  send('newRatioNode');
+}
 
-on('setAspect', (event) => {
-
-})
-
-// const _addSoundGrid = ({ audio, gui }, sound) => () => {
-//   node.label = `new ${sound}`;
-//   node.setParent(nodes[5]);
-//   node._coords = [500, 500];
-//   gui.updateCoords(node.id)([500, 500]);
-// };
+on('setAspect', (event) => { })
 
 const soundTypes = ['hat', 'ride', 'rim', 'kick'];
 
@@ -36,41 +30,36 @@ const App = (props) => {
   const [components, setComponents] = useState({});
   useEffect(() => {
     on('soundGridCreated', (event) => {
-      console.log(event);
+      console.log('soundgridcreated!!', event);
+      gui.updateCoords(event.id)([200, 200]);
+      console.log('got past gui.updatecoords');
+      console.log('gui.coords', gui.coords);
       setComponents(components => ({ ...components, [event.id]: { type: 'soundGrid' } }));
     });
+
+    on('ratioNodeCreated', (event) => {
+      console.log('rationode create!d', event);
+      gui.updateCoords(event.id)([200, 200]);
+      setComponents(components => ({ ...components, [event.id]: { type: 'ratioBox' } }));
+    });
+
   }, []);
+
+  useEffect(() => {
+    on('drag', e => {
+      const { id, x, y } = e;
+      gui.updateCoords(id)([x, y]);
+    });
+  }, [])
+
   const [bpm, updateBpm] = useState(400);
 
   // changing keyOffset is a way to force React to unmount old components
   const [keyOffset, setKeyOffset] = useState(0);
 
-  /*   const loadSong = (songJsonStr) => () => {
-      const json = JSON.parse(songJsonStr);
-      const nodes = loadFromJson(json.parts, audio.scheduler);
-      const coords = Object.fromEntries(
-        Object.entries(nodes).map(([k, v]) => [k, v._coords])
-      );
-      gui.setCoords(coords);
-      graph.nodes = nodes;
-      audio.setBpm(json.bpm);
-      updateBpm(json.bpm);
-      gui.setActives(
-        Object.fromEntries(Object.values(nodes).map(node => [node.id, 0]))
-      );
-      setKeyOffset(n => n + 10000);
-      window.nodes = nodes;
-      console.log('loadSong completed.');
-    }; */
-
   const handleLoadButton = () => {
     setCurrentPage('LOAD');
   };
-
-  // const setLoadedSong = (song) => {
-  //   setCurrentPage('MAIN');
-  //   loadSong(song.json)();
-  // };
 
   const handleBpmChange = (bpm) => {
     updateBpm(bpm);
@@ -95,33 +84,30 @@ const App = (props) => {
               NEW {sound.toUpperCase()}
             </button>
           ))}
+          <button onClick={addRatioBox}>
+            NEW RATIOBOX
+            </button>
           <div className="canvas">
             {Object.entries(components).map(([id, component]) =>
               component.type === 'soundGrid'
-                ? <SoundGrid id={Number(id)} />
+                ? <SoundGrid
+                  id={Number(id)}
+                  coords={gui.coords[id]}
+                />
+                : component.type === 'ratioBox'
+                ? <RatioBox
+                  id={Number(id)}
+                  coords={gui.coords[id]}
+                />
                 : <div>{component.type}</div>
             )}
           </div>
-          {/* <div className="canvas">
-            {Object.values(audio.nodes).map(n => {
-              const Component = componentTypes[n.type];
-              return (<Component
-                key={n.id + keyOffset} node={n}
-                label={n?.label || n._aspects.sounds[0]}
-                updateCoords={gui.updateCoords(n.id)}
-                forceUpdate={gui.forceUpdate}
-              />);
-            })}
-
-            {Object.values(audio.nodes).map(node => node._parent && (
-              <Line coords={[
-                ...gui.parentCoords(node._parent.id),
-                ...gui.childCoords(node.id)
-              ]} />
-            ))}
-          </div> */}
         </>
       )}
+
+      {gui.lines.map(coords => (
+        <Line coords={coords} />
+      ))}
 
       {currentPage === 'LOAD' && (
         <LoadSong
@@ -129,7 +115,6 @@ const App = (props) => {
           setSong={setLoadedSong}
         />
       )}
-
 
     </div>
   );

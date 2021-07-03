@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
-import { eventBus, on, onId, send } from '../eventbus.js';
-import { filter } from 'rxjs/operators';
-
-window.eventBus = eventBus;
+import { on, onId, send } from '../eventbus.js';
 
 const updated = (arr, idx, val) => {
   const res = [...arr];
@@ -11,14 +8,9 @@ const updated = (arr, idx, val) => {
   return res;
 }
 
-const SoundGrid = ({ id, label = 'temp' }) => {
+const SoundGrid = ({ id, coords, label = 'temp' }) => {
   const [active, setActive] = useState(-1);
-
   const [status, setStatus] = useState(() => ['off', 'off']);
-
-  // useEffect(() => {
-  // node.setActiveListener(setActive);
-  // }, [node]);
 
   useEffect(() => {
     onId(id, 'noteon', (event) => setActive(event.statusesIdx));
@@ -36,15 +28,16 @@ const SoundGrid = ({ id, label = 'temp' }) => {
   return (
     <HorizontalGrid
       label={id}
+      id={id}
       status={status}
       update={index => {
         // node.updateIn('statuses', i, toggle);
-        eventBus.next({ code: 'toggleStatusButton', id, index })
+        send('toggleStatusButton', { id, index })
       }}
       // forceUpdate={forceUpdate}
       // node={node}
       active={active}
-      startCoords={[100, 150 + 100 * id]}
+      coords={coords}
       updateCoords={console.log}
       lengthen={lengthen}
       shorten={shorten}

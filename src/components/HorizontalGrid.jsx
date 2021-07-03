@@ -4,12 +4,12 @@ import DragIcon from './DragIcon.jsx';
 import GridCell from './GridCell.jsx';
 
 const HorizontalGrid = (props) => {
-  let { status, update, label, active, startCoords,
-    lengthen, shorten, mute } = props;
+  let { status, update, label, active, coords,
+    lengthen, shorten, mute, id } = props;
 
   // startCoords = node._coords ? node._coords : startCoords;
-  const [x, y, drag] = [...startCoords, console.log];
-
+  const drag = useDrag({ id });
+  const [x, y] = coords;
   const [muted, setMuted] = useState(false);
   const toggleMute = () => {
     mute();

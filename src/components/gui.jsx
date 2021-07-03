@@ -17,27 +17,27 @@ const useGui = (audio) => {
 
   const buttonClick = () => { eventBus.next({ code: 'playStop' }) };
 
-  const [coords, setCoords] = useState(
-    Object.fromEntries(Object.entries(graph._nodes).map(([k, v]) => [k, v._coords]))
-  );
-  const updateCoords = id => val => { setCoords({ ...coords, [id]: val }); };
-  const parentCoords = id => {
-    if ([0, 5].includes(id)) {
-      return [coords[id][0] + 245, coords[id][1] + 55];
-    }
-    return [coords[id][0] + 12, coords[id][1] + 12];
-  }
-  const childCoords = id => {
-    if ([0, 5].includes(id)) {
-      return [coords[id][0] + 15, coords[id][1] + 12];
-    }
-    return [coords[id][0] + 12, coords[id][1] + 12];
-  }
+  const [coords, setCoords] = useState({});
+  window.coords = coords;
+  const updateCoords = id => val => { setCoords(coords => ({ ...coords, [id]: val })); };
+  const [lines, setLines] = useState([[100, 500, 300, 300]]);
+  // const parentCoords = id => {
+  //   if ([0, 5].includes(id)) {
+  //     return [coords[id][0] + 245, coords[id][1] + 55];
+  //   }
+  //   return [coords[id][0] + 12, coords[id][1] + 12];
+  // }
+  // const childCoords = id => {
+  //   if ([0, 5].includes(id)) {
+  //     return [coords[id][0] + 15, coords[id][1] + 12];
+  //   }
+  //   return [coords[id][0] + 12, coords[id][1] + 12];
+  // }
   const forceUpdate = useForceUpdate();
 
   return {
-    actives, setActives, currentTime, setCurrentTime, buttonClick,
-    updateCoords, setCoords, coords, childCoords, parentCoords, forceUpdate,
+    actives, setActives, currentTime, setCurrentTime, buttonClick, lines,
+    updateCoords, setCoords, coords, forceUpdate,
   };
 };
 

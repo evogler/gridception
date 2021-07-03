@@ -1,5 +1,6 @@
 import { on, send } from './eventbus.js';
 import Node from './node.js';
+import RatioNode from './rationode.js';
 
 class Graph {
   constructor() {
@@ -34,13 +35,26 @@ on('newSoundGrid', (event) => {
     const statuses = ['on', ...new Array(Math.floor(Math.random() * 5 + 3)).fill('off')];
     send('setAspect', { id: node.id, aspect: 'statuses', values: statuses });
   }, 0);
-
 });
+
+on('newRatioNode', () => {
+  const node = new RatioNode();
+  graph.addNode(node);
+  send('ratioNodeCreated', { id: node.id });
+  setTimeout(() => {
+    send('setTime', { id: node.id, time: '1 1 1 1'});
+  });
+})
 
 on('setAspect', (event) => {
   const { id, aspect, values } = event;
   graph.get(id).set(aspect, [...values]);
 });
+
+on('setTime', (event) => {
+  const { id, text } = event;
+  graph.get(id).setTime(text);
+})
 
 on('lengthen', ({ id }) => {
   graph.get(id).lengthen();
