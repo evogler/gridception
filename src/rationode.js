@@ -19,6 +19,7 @@ class RatioNode extends Node {
       return;
     }
 
+    this._sounding = false;
 
     if (timeStr) {
       this.setTime(timeStr);

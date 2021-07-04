@@ -5,7 +5,7 @@ import useDrag from '../usedrag.js';
 
 const RatioBox = ({ label, id, coords = [0, 0], updateCoords }) => {
   const [text, setText] = useState('1 1 1 1');
-
+  label = label ?? id;
   useEffect(() => {
     onId(id, 'setTime', (event) => {
       setText(event.text);

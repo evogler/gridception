@@ -66,6 +66,14 @@ on('shorten', ({ id }) => {
   send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
 });
 
+on('setParent', ({ childId, parentId }) => {
+  console.log('gonna setParent', { childId, parentId });
+  const parent = graph.get(parentId);
+  const child = graph.get(childId);
+  child.setParent(parent);
+  parent.addChild(child);
+});
+
 export default graph;
 
 window.graph = graph;

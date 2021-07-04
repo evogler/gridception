@@ -5,8 +5,6 @@ import { filter } from 'rxjs/operators';
 
 const eventBus = new Subject();
 
-window.eventBus = eventBus;
-
 const on = (code, fn) =>
   eventBus
     .pipe(filter(e => e.code === code))
@@ -28,3 +26,6 @@ const send = (code, obj) => {
 export { eventBus, on, onId, send };
 
 eventBus.subscribe(e => console.log('EB', e));
+
+window.eventBus = eventBus;
+window.send = send;
