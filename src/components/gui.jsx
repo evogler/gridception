@@ -12,8 +12,15 @@ function useForceUpdate() {
 const useGui = (audio) => {
   const [actives, setActives] = useState(() => Object.fromEntries(graph.allNodes()));
   const [currentTime, setCurrentTime] = useState(0);
+  const [wires, setWires] = useState({});
 
-  on('currentPlayTime', (({ time }) => setCurrentTime(time)));
+  useEffect(() => {
+    on('currentPlayTime', (({ time }) => setCurrentTime(time)));
+
+    on('setParent', ({ childId, parentId }) => {
+      setWires(wires => ({ ...wires, [childId]: parentId }));
+    });
+  }, []);
 
   const buttonClick = () => { eventBus.next({ code: 'playStop' }) };
 
@@ -37,7 +44,7 @@ const useGui = (audio) => {
 
   return {
     actives, setActives, currentTime, setCurrentTime, buttonClick, lines,
-    updateCoords, setCoords, coords, forceUpdate,
+    updateCoords, setCoords, coords, forceUpdate, wires,
   };
 };
 

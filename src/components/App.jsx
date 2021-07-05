@@ -105,9 +105,9 @@ const App = (props) => {
         </>
       )}
 
-      {gui.lines.map(coords => (
+      {/* {gui.lines.map(coords => (
         <Line coords={coords} />
-      ))}
+      ))} */}
 
       {currentPage === 'LOAD' && (
         <LoadSong

@@ -67,7 +67,6 @@ on('shorten', ({ id }) => {
 });
 
 on('setParent', ({ childId, parentId }) => {
-  console.log('gonna setParent', { childId, parentId });
   const parent = graph.get(parentId);
   const child = graph.get(childId);
   child.setParent(parent);

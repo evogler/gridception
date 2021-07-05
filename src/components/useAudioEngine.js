@@ -9,6 +9,7 @@ const useAudioEngine = () => {
   let scheduler;
   useEffect(() => {
     scheduler = new Scheduler(graph);
+    window.scheduler = scheduler;
   }, []);
   const [nodes, setNodes] = useState(() => []);
   useEffect(() => { window.nodes = nodes; }, []);

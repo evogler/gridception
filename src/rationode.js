@@ -45,6 +45,9 @@ class RatioNode extends Node {
   }
 
   _interpretRatioNodeStr(str) {
+    if (str.trim() === '') {
+      return [1];
+    }
     const groups = str.split(',');
     const res = [];
     for (let group of groups) {

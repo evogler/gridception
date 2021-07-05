@@ -104,6 +104,7 @@ class Scheduler {
   }
 
   _eventLoop() {
+    // console.log('_eventLoop');
     const startRealTime = this.lastEventWindowEnd;
     const endRealTime = this._now() + this.eventBufferSize / 1000;
     const startMusicTime = this._realTimeToMusicTime(startRealTime);
@@ -122,6 +123,7 @@ class Scheduler {
       const extraVisualDelay = 100;
       const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
       setTimeout(() => eventBus.next({ code: 'noteon', ...e }), delay);
+      // console.log('delay', delay / 1000);
 
       log.log('event');
       if (status === 'on' && sounding) {
