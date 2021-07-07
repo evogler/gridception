@@ -13,7 +13,6 @@ const useGui = (audio) => {
   const [actives, setActives] = useState(() => Object.fromEntries(graph.allNodes()));
   const [currentTime, setCurrentTime] = useState(0);
   const [wires, setWires] = useState({});
-
   useEffect(() => {
     on('currentPlayTime', (({ time }) => setCurrentTime(time)));
 
@@ -27,24 +26,22 @@ const useGui = (audio) => {
   const [coords, setCoords] = useState({});
   window.coords = coords;
   const updateCoords = id => val => { setCoords(coords => ({ ...coords, [id]: val })); };
-  const [lines, setLines] = useState([[100, 500, 300, 300]]);
-  // const parentCoords = id => {
-  //   if ([0, 5].includes(id)) {
-  //     return [coords[id][0] + 245, coords[id][1] + 55];
-  //   }
-  //   return [coords[id][0] + 12, coords[id][1] + 12];
-  // }
-  // const childCoords = id => {
-  //   if ([0, 5].includes(id)) {
-  //     return [coords[id][0] + 15, coords[id][1] + 12];
-  //   }
-  //   return [coords[id][0] + 12, coords[id][1] + 12];
-  // }
+
+  const getWires = () => {
+    const res = [];
+    for (const [child, parent] of Object.entries(wires)) {
+      res.push([coords[parent][0] + 25,
+                coords[parent][1] + 25,
+                coords[child][0] + 25,
+                coords[child][1] + 25]);
+    }
+    return res;
+  }
   const forceUpdate = useForceUpdate();
 
   return {
-    actives, setActives, currentTime, setCurrentTime, buttonClick, lines,
-    updateCoords, setCoords, coords, forceUpdate, wires,
+    actives, setActives, currentTime, setCurrentTime, buttonClick,
+    updateCoords, setCoords, coords, forceUpdate, wires, getWires,
   };
 };
 
