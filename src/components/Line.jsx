@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Line = ({ coords }) => {
+const Line = ({ coords, extraClass = null }) => {
   let [x1, y1, x2, y2] = coords;
   const padding = 0;
   const margin = 5;
@@ -16,9 +16,9 @@ const Line = ({ coords }) => {
   const transY = y1;
   const width = dist + 'px';
   const transform = `translate(${transX}px, ${transY}px) rotate(${rot}rad)`;
-
+  const classStr = ["line", extraClass].join(' ');
   return (
-    <div className="line" style={{width, transform}} />
+    <div className={classStr} style={{width, transform}} />
   )
 }
 

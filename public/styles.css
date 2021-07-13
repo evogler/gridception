@@ -78,6 +78,11 @@ button {
   cursor: grabbing;
 }
 
+.wire-connector {
+  position: absolute;
+  left: 30px;
+}
+
 .muted {
   opacity: .5;
 }
@@ -179,6 +184,11 @@ button {
   height: 1px;
   background-color: #0008;
   transform-origin: top left;
+}
+
+.drag-line {
+  z-index: 1000;
+  box-shadow: 0 0 10px  black;
 }
 
 .slider {

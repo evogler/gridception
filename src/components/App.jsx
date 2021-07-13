@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header.jsx';
 import Line from './Line.jsx';
+import DragWire from './DragWire.jsx';
 import LoadSong from './LoadSong.jsx';
 import { SoundGrid, HitsGrid, RatioBox, componentTypes } from './componentTypes.js';
 import { Node, RatioNode, HitsNode } from './nodeTypes.js';
@@ -108,6 +109,8 @@ const App = (props) => {
       {gui.getWires().map(coords => (
         <Line coords={coords} />
       ))}
+
+      <DragWire />
 
       {currentPage === 'LOAD' && (
         <LoadSong
