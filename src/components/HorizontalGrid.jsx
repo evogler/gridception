@@ -29,7 +29,8 @@ const HorizontalGrid = (props) => {
       style={{ left: x, top: y }}
     >
       <DragIcon startDrag={drag} />
-      <ConnectIcon startWireDrag={wireDrag} />
+      <ConnectIcon id={id} startWireDrag={wireDrag} parent={true}/>
+      <ConnectIcon id={id} startWireDrag={wireDrag} parent={false}/>
       <span className="horizontal-grid-label">{label}</span>
       <span className="grid-button" onClick={lengthen}>+</span>
       <span className="grid-button" onClick={shorten}>-</span>

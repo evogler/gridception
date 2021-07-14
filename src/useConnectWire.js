@@ -25,17 +25,22 @@ const useConnectWire = () => {
 
   const handleMouseUp = () => {
     stopDragging();
-    document.removeEventListener('mouseup', handleMouseUp, false);
-    document.removeEventListener('mousemove', handleMouseMove, false);
+    Object.entries(listeners).forEach(([type, fn]) =>
+      document.removeEventListener(type, fn, false));
   };
 
   const startWireDrag = (e) => {
     const x = e.clientX;
     const y = e.clientY;
     startDragging({ x, y });
-    document.addEventListener('mouseup', handleMouseUp, false);
-    document.addEventListener('mousemove', handleMouseMove, false);
+    Object.entries(listeners).forEach(([type, fn]) =>
+      document.addEventListener(type, fn, false));
   };
+
+  const listeners = {
+    'mouseup': handleMouseUp,
+    'mousemove': handleMouseMove,
+  }
 
   return startWireDrag;
 };

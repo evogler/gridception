@@ -15,10 +15,6 @@ const DragWire = () => {
 
   const updateWireDrag = ({ x, y }) => {
     setCoords(coords => [...coords.slice(0, 2), x, y]);
-    console.log('updateWireDrag received', {
-      x, y, visible,
-      coords: JSON.stringify(coords)
-    });
   };
 
   const stopWireDrag = () => {

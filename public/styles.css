@@ -83,6 +83,17 @@ button {
   left: 30px;
 }
 
+.wire-connector-top {
+}
+
+.wire-connector-bottom {
+  bottom: 3px;
+}
+
+.wire-connector-active {
+  text-shadow: 0 0 5px blue;
+}
+
 .muted {
   opacity: .5;
 }
