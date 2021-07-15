@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useConnectWire from '../useConnectWire.js';
-import { on } from '../eventbus.js';
+import { send, on } from '../eventbus.js';
 
 const ConnectIcon = ({ id, relation }) => {
   const parent = relation === 'PARENT';
@@ -12,49 +12,36 @@ const ConnectIcon = ({ id, relation }) => {
   const [otherId, setOtherId] = useState(null);
 
   useEffect(() => {
-    console.log('useEffect triggered.');
-    on('startWireDrag', (event) => {
-      const { fromId, connectingTo } = event;
-      console.log({ id, fromId, relation, parent, connectingTo },
-         'startWireDrag rec');
-
-      if (connectingTo !== relation || fromId === id) {
-        setAvailable(false);
-        return;
-      }
-      setAvailable(true);
-      setOtherId(fromId);
-      console.log(id, 'ready to connect to', fromId);
-    });
-
-    on('stopWireDrag', (e) => stopWireDrag(e));
+    on('startWireDrag', onStartWireDrag);
+    on('stopWireDrag', stopWireDrag);
   }, []);
 
-  let stopWireDrag;
+  const onStartWireDrag = event => {
+    const { fromId, connectingTo } = event;
+    if (connectingTo !== relation || fromId === id) {
+      setAvailable(false);
+      return;
+    }
+    setAvailable(true);
+    setOtherId(fromId);
+  }
 
-  useEffect(() => {
-    console.log('updating useEffect based on active', {active, otherId});
-    stopWireDrag = event => {
-      console.log({ otherId, active });
-      if (active) {
-        console.log('CONNECTION MADE!', { id, otherId, relation });
-      }
-      setAvailable(true);
-      setActive(false);
-      console.log(id, 'not connecting');
-    };
-  }, [active, otherId]);
-
+  const stopWireDrag = event => {
+    setAvailable(true);
+    setActive(false);
+  };
 
   const handleMouseOver = e => {
-    console.log({ id, label }, 'I got moused over!');
     if (available) {
       setActive(true);
+      send('wireDragAdd', { id, relation });
     }
   };
 
   const handleMouseOut = e => {
-    console.log({ id, label }, 'Bye!');
+    if (active) {
+      send('wireDragRemove', { id });
+    }
     setActive(false);
   };
 

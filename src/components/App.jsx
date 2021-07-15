@@ -23,12 +23,29 @@ on('setAspect', (event) => { })
 
 const soundTypes = ['hat', 'ride', 'rim', 'kick'];
 
+let pcDrag = {};
+const pcDragAdd = (k, v) => pcDrag[k] = v;
+const pcDragRemove = k => delete pcDrag[k];
+const pcDragReset = () => pcDrag = {};
+const pcDragTryConnect = () => {
+  const ends = Object.entries(pcDrag);
+  if (ends.length !== 2) return;
+  const [a, b] = ends;
+  if (b[1] === 'CHILD') {
+    send('setParent', { childId: b[0], parentId: a[0]});
+  } else {
+    send('setParent', { childId: a[0], parentId: b[0]});
+  }
+};
+
 const App = (props) => {
   const [currentPage, setCurrentPage] = useState('MAIN');
   const audio = useAudioEngine();
   const gui = useGui(audio);
 
   const [components, setComponents] = useState({});
+  // const [pcDrag, setPcDrag] = useState({});
+
   useEffect(() => {
     on('soundGridCreated', (event) => {
       console.log('soundgridcreated!!', event);
@@ -50,7 +67,30 @@ const App = (props) => {
       const { id, x, y } = e;
       gui.updateCoords(id)([x, y]);
     });
-  }, [])
+
+    on('startWireDrag', e => {
+      console.log('App got startWireDrag', { e });
+      pcDragAdd(e.fromId, null);
+    });
+
+    on('wireDragAdd', e => {
+      console.log('App got wireDragAdd', { e });
+      pcDragAdd(e.id, e.relation);
+      console.log({pcDrag});
+    });
+
+    on('wireDragRemove', e => {
+      pcDragRemove(e.id);
+      console.log('App got wireDragRemove', { e });
+      console.log({pcDrag});
+    });
+
+    on('stopWireDrag', () => {
+      console.log('finished dragging with pcdrag state:', pcDrag);
+      pcDragTryConnect();
+      pcDragReset();
+    });
+  }, []);
 
   const [bpm, updateBpm] = useState(400);
 
