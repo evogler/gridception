@@ -7,10 +7,10 @@ const DragWire = () => {
   const [visible, setVisible] = useState(false);
   const [coords, setCoords] = useState(() => [0, 0, 100, 100]);
 
-  const startWireDrag = ({ x, y }) => {
+  const startWireDrag = ({ x, y, connectingTo }) => {
     setCoords([x, y, x, y]);
     setVisible(true);
-    console.log('startWireDrag received', { x, y, visible });
+    console.log('startWireDrag received', { x, y, visible, connectingTo });
   };
 
   const updateWireDrag = ({ x, y }) => {

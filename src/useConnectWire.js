@@ -6,11 +6,6 @@ const useConnectWire = () => {
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
 
-  const startDragging = ({ x, y }) => {
-    send('startWireDrag', { x, y })
-    // setDragging(true);
-  }
-
   const stopDragging = () => {
     send('stopWireDrag');
     // setDragging(false);
@@ -29,10 +24,11 @@ const useConnectWire = () => {
       document.removeEventListener(type, fn, false));
   };
 
-  const startWireDrag = (e) => {
+  const startWireDrag = ({ fromId, connectingTo, e }) => {
     const x = e.clientX;
     const y = e.clientY;
-    startDragging({ x, y });
+    send('startWireDrag', { x, y, fromId, connectingTo });
+    // setDragging(true);
     Object.entries(listeners).forEach(([type, fn]) =>
       document.addEventListener(type, fn, false));
   };

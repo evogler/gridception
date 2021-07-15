@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import useDrag from '../usedrag.js';
-import useConnectWire from '../useConnectWire.js';
 import DragIcon from './DragIcon.jsx';
 import ConnectIcon from './ConnectIcon.jsx';
 import GridCell from './GridCell.jsx';
@@ -11,7 +10,6 @@ const HorizontalGrid = (props) => {
 
   // startCoords = node._coords ? node._coords : startCoords;
   const drag = useDrag({ id });
-  const wireDrag = useConnectWire();
   const [x, y] = coords;
   const [muted, setMuted] = useState(false);
   const toggleMute = () => {
@@ -29,8 +27,8 @@ const HorizontalGrid = (props) => {
       style={{ left: x, top: y }}
     >
       <DragIcon startDrag={drag} />
-      <ConnectIcon id={id} startWireDrag={wireDrag} parent={true}/>
-      <ConnectIcon id={id} startWireDrag={wireDrag} parent={false}/>
+      <ConnectIcon id={id} relation="PARENT"/>
+      <ConnectIcon id={id} relation="CHILD"/>
       <span className="horizontal-grid-label">{label}</span>
       <span className="grid-button" onClick={lengthen}>+</span>
       <span className="grid-button" onClick={shorten}>-</span>

@@ -3,7 +3,8 @@ import React from 'react';
 const Line = ({ coords, extraClass = null }) => {
   let [x1, y1, x2, y2] = coords;
   const padding = 0;
-  const margin = 5;
+  // const margin = 5;
+  const margin = 0;
   x1 -= padding;
   y1 -= padding;
   x2 -= margin;

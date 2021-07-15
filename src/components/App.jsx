@@ -43,7 +43,6 @@ const App = (props) => {
       gui.updateCoords(event.id)([200, 200]);
       setComponents(components => ({ ...components, [event.id]: { type: 'ratioBox' } }));
     });
-
   }, []);
 
   useEffect(() => {
