@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { on, onId, send } from '../eventbus.js';
 import DragIcon from './DragIcon.jsx';
+import ConnectIcon from './ConnectIcon.jsx';
 import useDrag from '../usedrag.js';
 
 const RatioBox = ({ label, id, coords = [0, 0], updateCoords }) => {
@@ -22,6 +23,8 @@ const RatioBox = ({ label, id, coords = [0, 0], updateCoords }) => {
   return (
     <div className="ratio-box" style={{ left: x, top: y }} >
       <DragIcon startDrag={drag} />
+      <ConnectIcon id={id} relation="PARENT"/>
+      <ConnectIcon id={id} relation="CHILD"/>
       <span className="horizontal-grid-label">{label}</span>
       <textarea
         onChange={e => { handleSetTime(e.target.value); }}

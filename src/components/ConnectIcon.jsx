@@ -58,7 +58,6 @@ const ConnectIcon = ({ id, relation }) => {
       onMouseOut={available ? handleMouseOut : undefined}
     >
       {label}
-      {active ? "T" : "F"}
     </div>
   );
 };
