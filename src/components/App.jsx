@@ -60,7 +60,22 @@ const App = (props) => {
       gui.updateCoords(event.id)([200, 200]);
       setComponents(components => ({ ...components, [event.id]: { type: 'ratioBox' } }));
     });
+
   }, []);
+
+  const [nodeDeleteSub, setNodeDeleteSub] = useState(null);
+  useEffect(() => {
+    if (nodeDeleteSub) {
+      nodeDeleteSub.unsubscribe();
+    }
+    const sub = on('nodeDeleted', ({ id }) => {
+      const newComponents = Object.entries(components)
+        .filter(([k, v]) => Number(k) !== id)
+      setComponents(Object.fromEntries(newComponents));
+      gui.removeWiresForNode(id);
+    });
+    setNodeDeleteSub(sub);
+  }, [components]);
 
   useEffect(() => {
     on('drag', e => {

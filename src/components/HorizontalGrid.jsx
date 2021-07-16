@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useDrag from '../usedrag.js';
 import DragIcon from './DragIcon.jsx';
 import ConnectIcon from './ConnectIcon.jsx';
+import CloseIcon from './CloseIcon.jsx';
 import GridCell from './GridCell.jsx';
 
 const HorizontalGrid = (props) => {
@@ -23,6 +24,7 @@ const HorizontalGrid = (props) => {
       style={{ left: x, top: y }}
     >
       <DragIcon startDrag={drag} />
+      <CloseIcon id={id}/>
       <ConnectIcon id={id} relation="PARENT"/>
       <ConnectIcon id={id} relation="CHILD"/>
       <span className="horizontal-grid-label">{label}</span>

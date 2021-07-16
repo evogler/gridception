@@ -12,7 +12,15 @@ class Graph {
     if (this._nodes[id]) {
       throw new Error('Tried to add node with pre-existing ID.');
     }
-    this._nodes[node.id] = node;
+    this._nodes[id] = node;
+  }
+
+  deleteNode(node) {
+    const id = node.id;
+    if (!this._nodes[id]) {
+      throw new Error('Tried to delete non-existant node');
+    }
+    delete this._nodes[id];
   }
 
   allNodes() {
@@ -71,6 +79,17 @@ on('setParent', ({ childId, parentId }) => {
   const child = graph.get(childId);
   child.setParent(parent);
   parent.addChild(child);
+});
+
+on('deleteNode', ({ id }) => {
+  const node = graph.get(id);
+  const children = node._children;
+  const parent = node._parent;
+  if (parent) { parent.removeChild(node); }
+  children.forEach(child => child.setParent(null));
+  node.delete();
+  graph.deleteNode(node);
+  send('nodeDeleted', { id });
 });
 
 export default graph;

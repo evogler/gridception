@@ -52,6 +52,10 @@ class Node {
     };
   }
 
+  delete() {
+    return Promise.resolve();
+  }
+
   setActiveListener(listener) {
     this._activeListener = listener;
   }
@@ -64,6 +68,12 @@ class Node {
 
   addChild(child) {
     this._children.push(child);
+  }
+
+  removeChild(child) {
+    const idx = this._children.indexOf(child);
+    if (idx === -1) { return; }
+    this._children.splice(idx, 1);
   }
 
   setSounding(sounding) {

@@ -37,11 +37,19 @@ const useGui = (audio) => {
     }
     return res;
   }
+  const removeWiresForNode = (id) => {
+    setWires(wires => {
+      return Object.fromEntries(
+        Object.entries(wires)
+        .filter(([k, v]) => Number(k) !== id && Number(v) !== id));
+    });
+  };
   const forceUpdate = useForceUpdate();
 
   return {
     actives, setActives, currentTime, setCurrentTime, buttonClick,
     updateCoords, setCoords, coords, forceUpdate, wires, getWires,
+    removeWiresForNode,
   };
 };
 

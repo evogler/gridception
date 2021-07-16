@@ -78,6 +78,16 @@ button {
   cursor: grabbing;
 }
 
+.close-icon {
+  position: absolute;
+  left: 50px;
+  cursor: pointer;
+}
+
+.close-icon:hover {
+  text-shadow: 0 0 5px red;
+}
+
 .wire-connector {
   position: absolute;
   left: 30px;
