@@ -6,16 +6,12 @@ import GridCell from './GridCell.jsx';
 
 const HorizontalGrid = (props) => {
   let { status, update, label, active, coords,
-    lengthen, shorten, mute, id } = props;
+    lengthen, shorten, muted, toggleMute, id } = props;
 
   // startCoords = node._coords ? node._coords : startCoords;
   const drag = useDrag({ id });
   const [x, y] = coords;
-  const [muted, setMuted] = useState(false);
-  const toggleMute = () => {
-    mute();
-    setMuted(!muted);
-  };
+
 
   // useEffect(() => {
     // console.log(node?.label, node?.type, node?._aspects?.statuses);

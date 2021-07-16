@@ -12,6 +12,8 @@ const SoundGrid = ({ id, coords, label = 'temp' }) => {
   const [active, setActive] = useState(-1);
   const [status, setStatus] = useState(() => ['off', 'off']);
 
+  const [muted, setMuted] = useState(false);
+
   useEffect(() => {
     onId(id, 'noteon', (event) => setActive(event.statusesIdx));
     onId(id, 'setStatus', (e) => setStatus(status => updated(status, e.index, e.status)));
@@ -23,7 +25,15 @@ const SoundGrid = ({ id, coords, label = 'temp' }) => {
 
   const lengthen = () => { send('lengthen', { id }) };
   const shorten = () => { send('shorten', { id }) };
-  const mute = () => { console.log('mute') };
+  const toggleMute = () => {
+    console.log('mute');
+    if (muted) {
+      send('unmute', { id });
+    } else {
+      send('mute', { id });
+    }
+    setMuted(muted => !muted);
+  };
 
   return (
     <HorizontalGrid
@@ -41,7 +51,8 @@ const SoundGrid = ({ id, coords, label = 'temp' }) => {
       updateCoords={console.log}
       lengthen={lengthen}
       shorten={shorten}
-      mute={mute}
+      muted={muted}
+      toggleMute={toggleMute}
     />
   );
 };

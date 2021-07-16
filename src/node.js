@@ -1,7 +1,7 @@
 import { log } from './logger.js';
 import { uniqueId } from './util.js';
 import nodeDefaults from './nodedefaults.js';
-import { eventBus, on } from './eventbus.js';
+import { eventBus, on, onId } from './eventbus.js';
 import { filter } from 'rxjs/operators';
 
 const toggle = (x) => x === 'on' ? 'off' : 'on';
@@ -32,6 +32,12 @@ class Node {
     eventBus.pipe(
       filter(e => e.code === 'toggleStatusButton' && e.id === this.id)
       ).subscribe(e => this.updateIn('statuses', e.index, toggle));
+    onId(this.id, 'mute', () => {
+      this._sounding = false;
+    });
+    onId(this.id, 'unmute', () => {
+      this._sounding = true;
+    });
   }
 
   toJson() {
