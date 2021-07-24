@@ -74,6 +74,12 @@ on('shorten', ({ id }) => {
   send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
 });
 
+on('setLength', ({ id, length}) => {
+  graph.get(id).setLength(length);
+  console.log('setLength received')
+  send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
+});
+
 on('setParent', ({ childId, parentId }) => {
   const parent = graph.get(parentId);
   const child = graph.get(childId);

@@ -12,10 +12,15 @@ const HorizontalGrid = (props) => {
   // startCoords = node._coords ? node._coords : startCoords;
   const drag = useDrag({ id });
   const [x, y] = coords;
-
-
+  const maxLength = 99;
+  const gridSizeChange = (e) => {
+    const length = e.target.value;
+    if (Number(length) && length <= maxLength) {
+      send('setLength', { id, length });
+    }
+  };
   // useEffect(() => {
-    // console.log(node?.label, node?.type, node?._aspects?.statuses);
+  // console.log(node?.label, node?.type, node?._aspects?.statuses);
   // }, []);
 
   return (
@@ -24,17 +29,24 @@ const HorizontalGrid = (props) => {
       style={{ left: x, top: y }}
     >
       <DragIcon startDrag={drag} />
-      <CloseIcon id={id}/>
-      <ConnectIcon id={id} relation="PARENT"/>
-      <ConnectIcon id={id} relation="CHILD"/>
+      <CloseIcon id={id} />
+      <ConnectIcon id={id} relation="PARENT" />
+      <ConnectIcon id={id} relation="CHILD" />
       <span className="horizontal-grid-label">{label}</span>
       <span className="grid-button" onClick={lengthen}>+</span>
       <span className="grid-button" onClick={shorten}>-</span>
+      <input
+        type="number"
+        min="0" max={maxLength}
+        className="grid-size-input"
+        onChange={gridSizeChange}
+        value={status.length}>
+      </input>
       <span className="grid-button" onClick={toggleMute}>m</span>
       {status.map((_, i) => (
         <GridCell key={i} index={i} status={status[i]}
-        active={i === active /* &&  status[i] === 'on' */}
-        click={() => {update(i); /* forceUpdate() */;}} />
+          active={i === active /* &&  status[i] === 'on' */}
+          click={() => { update(i); /* forceUpdate() */; }} />
       ))}
     </ div>
   );

@@ -114,6 +114,17 @@ class Node {
     }
   }
 
+  setLength(length) {
+    // console.log('received length', length);
+    // return;
+    while (length > this._aspects.statuses.length) {
+      this.lengthen();
+    }
+    while (length < this._aspects.statuses.length) {
+      this.shorten();
+    }
+  }
+
   _setAbsoluteTimes() {
     log('setAbsoluteTimes', this._timeCache);
     const times = this._aspects.times;

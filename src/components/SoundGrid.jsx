@@ -25,6 +25,7 @@ const SoundGrid = ({ id, coords, label = 'temp' }) => {
 
   const lengthen = () => { send('lengthen', { id }) };
   const shorten = () => { send('shorten', { id }) };
+  const setLength = (length) => { send('setLength'), { id, length }};
   const toggleMute = () => {
     console.log('mute');
     if (muted) {
@@ -51,6 +52,7 @@ const SoundGrid = ({ id, coords, label = 'temp' }) => {
       updateCoords={console.log}
       lengthen={lengthen}
       shorten={shorten}
+      setLength={setLength}
       muted={muted}
       toggleMute={toggleMute}
     />
