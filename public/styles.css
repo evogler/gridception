@@ -151,6 +151,22 @@ button {
   margin: 5px;
 }
 
+.horizontal-grid-right-edge {
+  background-color: #8888;
+  position: absolute;
+  width: 5px;
+  height: 100%;
+  right: 0;
+  top: 0;
+  border-radius: 0 8px 8px 0;
+  cursor: grab;
+}
+
+.horizontal-grid-right-edge:hover {
+  background-color: #8888;
+  box-shadow: 0 0 5px  purple;
+}
+
 .grid-cell {
   display: inline-block;
   width: 50px;

@@ -48,6 +48,7 @@ const HorizontalGrid = (props) => {
           active={i === active /* &&  status[i] === 'on' */}
           click={() => { update(i); /* forceUpdate() */; }} />
       ))}
+      <div className="horizontal-grid-right-edge undraggable"></div>
     </ div>
   );
 };
