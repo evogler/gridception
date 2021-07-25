@@ -50,7 +50,7 @@ on('newRatioNode', () => {
   graph.addNode(node);
   send('ratioNodeCreated', { id: node.id });
   setTimeout(() => {
-    send('setTime', { id: node.id, time: '1 1 1 1'});
+    send('setTime', { id: node.id, time: '1 1 1 1' });
   });
 })
 
@@ -64,6 +64,10 @@ on('setTime', (event) => {
   graph.get(id).setTime(text);
 })
 
+on('setStatusButton', ({ id, index, val}) => {
+  graph.get(id).setIn('statuses', index, val);
+});
+
 on('lengthen', ({ id }) => {
   graph.get(id).lengthen();
   send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
@@ -74,7 +78,7 @@ on('shorten', ({ id }) => {
   send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });
 });
 
-on('setLength', ({ id, length}) => {
+on('setLength', ({ id, length }) => {
   graph.get(id).setLength(length);
   console.log('setLength received')
   send('setAspect', { id, aspect: 'statuses', values: graph.get(id)._aspects.statuses });

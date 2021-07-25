@@ -19,9 +19,21 @@ const HorizontalGrid = (props) => {
       send('setLength', { id, length });
     }
   };
-  // useEffect(() => {
-  // console.log(node?.label, node?.type, node?._aspects?.statuses);
-  // }, []);
+
+  const [painting, setPainting] = useState(false);
+  const donePainting = () => {
+    document.removeEventListener('mouseup', donePainting, false);
+    setPainting(false);
+  }
+  const startPaint = (index, val) => {
+    document.addEventListener('mouseup', donePainting, false);
+    setPainting(val);
+    update(index, val);
+  };
+
+  const paint = (index) => {
+    update(index, painting);
+  };
 
   return (
     <div
@@ -45,8 +57,9 @@ const HorizontalGrid = (props) => {
       <span className="grid-button" onClick={toggleMute}>m</span>
       {status.map((_, i) => (
         <GridCell key={i} index={i} status={status[i]}
-          active={i === active /* &&  status[i] === 'on' */}
-          click={() => { update(i); /* forceUpdate() */; }} />
+          paint={paint} startPaint={startPaint} painting={painting}
+          active={i === active}
+          click={() => { update(i, status[i] === 'on' ? 'off' : 'on'); }} />
       ))}
       <div className="horizontal-grid-right-edge undraggable"></div>
     </ div>
