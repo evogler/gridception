@@ -41,9 +41,9 @@ const SoundGrid = ({ id, coords, label = 'temp' }) => {
       label={id}
       id={id}
       status={status}
-      update={index => {
+      update={(index, val) => {
         // node.updateIn('statuses', i, toggle);
-        send('toggleStatusButton', { id, index })
+        send('setStatusButton', { id, index, val })
       }}
       // forceUpdate={forceUpdate}
       // node={node}

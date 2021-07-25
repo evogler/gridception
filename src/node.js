@@ -29,9 +29,6 @@ class Node {
       this._sounding = true;
       this._timeCache = [];
     }
-    eventBus.pipe(
-      filter(e => e.code === 'toggleStatusButton' && e.id === this.id)
-      ).subscribe(e => this.updateIn('statuses', e.index, toggle));
     onId(this.id, 'mute', () => {
       this._sounding = false;
     });
@@ -98,6 +95,14 @@ class Node {
       this._setAbsoluteTimes();
     }
     eventBus.next({ code: 'setStatus', index, id: this.id, status: newStatus });
+  }
+
+  toggleIn(aspect, index) {
+    this.updateIn(aspect, index, toggle);
+  }
+
+  setIn(aspect, index, value) {
+    this.updateIn(aspect, index, () => value);
   }
 
   lengthen() {
