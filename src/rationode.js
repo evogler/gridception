@@ -19,6 +19,7 @@ class RatioNode extends Node {
       return;
     }
 
+    this._sounding = false;
 
     if (timeStr) {
       this.setTime(timeStr);
@@ -44,6 +45,9 @@ class RatioNode extends Node {
   }
 
   _interpretRatioNodeStr(str) {
+    if (str.trim() === '') {
+      return [1];
+    }
     const groups = str.split(',');
     const res = [];
     for (let group of groups) {

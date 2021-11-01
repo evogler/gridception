@@ -1,13 +1,14 @@
 import { playSound, audioCtx } from './webaudio.js';
 import log from './logger.js';
+import { eventBus, on } from './eventbus.js';
 
 window.ac = audioCtx;
 
 class Scheduler {
-  constructor() {
+  constructor(graph) {
     this.audioCtx = audioCtx;
     this.bpm = 400;
-    this.parts = [];
+    this.graph = graph;
     this.eventLoopPeriod = 50; // ms
     this.eventBufferSize = 200; // ms
     this.warmupTime = 115; // ms offset at start to allow first notes to play;
@@ -16,16 +17,8 @@ class Scheduler {
     this.timeListeners = [];
     this.timePublishInterval = 50; // ms
     window.setBpm = this.setBpm.bind(this);
-  }
-
-  addPart(part) {
-    this.parts.push(part);
-    console.log('scheduler.addPart', part);
-  }
-
-  reset() {
-    this.parts = [];
-    this.timeListeners = [];
+    on('playStop', this.playStop.bind(this));
+    on('setBpm', ({ bpm }) => this.setBpm(bpm));
   }
 
   setBpm(bpm) {
@@ -35,7 +28,7 @@ class Scheduler {
     this.startTimeSeconds = now;
   }
 
-  click() {
+  playStop() {
     if (!this.playing) {
       this.play();
     } else {
@@ -75,7 +68,8 @@ class Scheduler {
     const now = this.playing ? this._now() : this.pauseTime;
     let time = this._realTimeToMusicTime(now);
     time -= this.warmupTime / 1000;
-    this.timeListeners.forEach(fn => fn(time));
+    // this.timeListeners.forEach(fn => fn(time));
+    eventBus.next({ code: 'currentPlayTime', time });
     if (this.playing) {
       setTimeout(this._publishTimeLoop.bind(this), this.timePublishInterval);
     }
@@ -88,9 +82,10 @@ class Scheduler {
 
   _getEventsInWindow(startTimeSeconds, endTime) {
     let events = [];
-    for (const part of this.parts) {
+    for (const part of this.graph.allNodes()) {
       for (event of part.getEventsInTimeWindow(startTimeSeconds, endTime)) {
         event.sounding = part.sounding;
+        event.id = part.id;
         events.push(event);
       }
     }
@@ -109,6 +104,7 @@ class Scheduler {
   }
 
   _eventLoop() {
+    // console.log('_eventLoop');
     const startRealTime = this.lastEventWindowEnd;
     const endRealTime = this._now() + this.eventBufferSize / 1000;
     const startMusicTime = this._realTimeToMusicTime(startRealTime);
@@ -124,12 +120,10 @@ class Scheduler {
       const setActive = e.setActive;
       const eventTime = this._musicTimeToAudioCtxTime(time) + this.warmupTime / 1000;
 
-      if (setActive) {
-        const extraVisualDelay = 100;
-        const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
-        // console.log( 'eventTime', eventTime, 'startRealTime', startRealTime, 'delay', delay,);
-        setTimeout(setActive, delay);
-      }
+      const extraVisualDelay = 100;
+      const delay = (eventTime - startRealTime) * 1000 + extraVisualDelay;
+      setTimeout(() => eventBus.next({ code: 'noteon', ...e }), delay);
+      // console.log('delay', delay / 1000);
 
       log.log('event');
       if (status === 'on' && sounding) {

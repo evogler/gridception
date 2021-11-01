@@ -78,6 +78,32 @@ button {
   cursor: grabbing;
 }
 
+.close-icon {
+  position: absolute;
+  left: 50px;
+  cursor: pointer;
+}
+
+.close-icon:hover {
+  text-shadow: 0 0 5px red;
+}
+
+.wire-connector {
+  position: absolute;
+  left: 30px;
+}
+
+.wire-connector-top {
+}
+
+.wire-connector-bottom {
+  bottom: 3px;
+}
+
+.wire-connector-active {
+  text-shadow: 0 0 5px blue;
+}
+
 .muted {
   opacity: .5;
 }
@@ -123,6 +149,22 @@ button {
   border-radius: 8px;
   width: fit-content;
   margin: 5px;
+}
+
+.horizontal-grid-right-edge {
+  background-color: #8888;
+  position: absolute;
+  width: 5px;
+  height: 100%;
+  right: 0;
+  top: 0;
+  border-radius: 0 8px 8px 0;
+  cursor: grab;
+}
+
+.horizontal-grid-right-edge:hover {
+  background-color: #8888;
+  box-shadow: 0 0 5px  purple;
 }
 
 .grid-cell {
@@ -171,14 +213,27 @@ button {
 .line {
   padding: 0;
   margin: 0;
+  /* border-top: 5px solid green; */
+  /* border-bottom: 5px solid green; */
   box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -10;
-  height: 1px;
-  background-color: #0008;
+  /* height: 1px; */
+  height: 35px;
+  /* background-color: #0008; */
   transform-origin: top left;
+}
+
+.drag-line {
+  z-index: 1000;
+  box-shadow: 0 0 10px  black;
+}
+
+.line:hover {
+  box-shadow: 0 0 10px 10px red;
+  border: 10px solid brown;
 }
 
 .slider {

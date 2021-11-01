@@ -1,77 +1,119 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header.jsx';
 import Line from './Line.jsx';
+import DragWire from './DragWire.jsx';
 import LoadSong from './LoadSong.jsx';
 import { SoundGrid, HitsGrid, RatioBox, componentTypes } from './componentTypes.js';
 import { Node, RatioNode, HitsNode } from './nodeTypes.js';
 import { funkyBeatStr, jazzRideStr, bossaStr, loadFromJson } from './fromJson.js';
 import useGui from './gui.jsx';
 import useAudioEngine from './useAudioEngine.js';
+import { send, on, onId } from '../eventbus.js';
+import graph from '../graph.js';
 
-const addSoundGrid = ({ audio, gui }, sound) => () => {
-  const node = new Node();
-  node.set('statuses', ['on', 'off', 'off', 'off', 'off', 'off']);
-  node.set('sounds', [sound]);
-  node.label = `new ${sound}`;
-  node.setParent(nodes[5]);
-  node._coords = [500, 500];
-  gui.updateCoords(node.id)([500, 500]);
-  audio.scheduler.addPart(node);
-  audio.setNodes({ ...audio.nodes, [node.id]: node });
+const addSoundGrid = (sound) => {
+  send('newSoundGrid', { sound } );
 };
+
+const addRatioBox = () => {
+  send('newRatioNode');
+}
+
+on('setAspect', (event) => { })
 
 const soundTypes = ['hat', 'ride', 'rim', 'kick'];
 
-const songs = [
-  {
-    title: 'Jazz ride',
-    json: jazzRideStr,
-  },
-  {
-    title: 'Prisencolinensinainciusol',
-    json: funkyBeatStr,
-  },
-  {
-   title: 'bossa',
-   json: bossaStr,
-  },
-];
+let pcDrag = {};
+const pcDragAdd = (k, v) => pcDrag[k] = v;
+const pcDragRemove = k => delete pcDrag[k];
+const pcDragReset = () => pcDrag = {};
+const pcDragTryConnect = () => {
+  const ends = Object.entries(pcDrag);
+  if (ends.length !== 2) return;
+  const [a, b] = ends;
+  if (b[1] === 'CHILD') {
+    send('setParent', { childId: b[0], parentId: a[0]});
+  } else {
+    send('setParent', { childId: a[0], parentId: b[0]});
+  }
+};
 
 const App = (props) => {
-  const [currentPage, setCurrentPage] = useState('LOAD');
+  const [currentPage, setCurrentPage] = useState('MAIN');
   const audio = useAudioEngine();
   const gui = useGui(audio);
+
+  const [components, setComponents] = useState({});
+  // const [pcDrag, setPcDrag] = useState({});
+
+  useEffect(() => {
+    on('soundGridCreated', (event) => {
+      console.log('soundgridcreated!!', event);
+      gui.updateCoords(event.id)([200, 200]);
+      console.log('got past gui.updatecoords');
+      console.log('gui.coords', gui.coords);
+      setComponents(components => ({ ...components, [event.id]: { type: 'soundGrid' } }));
+    });
+
+    on('ratioNodeCreated', (event) => {
+      console.log('rationode create!d', event);
+      gui.updateCoords(event.id)([200, 200]);
+      setComponents(components => ({ ...components, [event.id]: { type: 'ratioBox' } }));
+    });
+
+  }, []);
+
+  const [nodeDeleteSub, setNodeDeleteSub] = useState(null);
+  useEffect(() => {
+    if (nodeDeleteSub) {
+      nodeDeleteSub.unsubscribe();
+    }
+    const sub = on('nodeDeleted', ({ id }) => {
+      const newComponents = Object.entries(components)
+        .filter(([k, v]) => Number(k) !== id)
+      setComponents(Object.fromEntries(newComponents));
+      gui.removeWiresForNode(id);
+    });
+    setNodeDeleteSub(sub);
+  }, [components]);
+
+  useEffect(() => {
+    on('drag', e => {
+      const { id, x, y } = e;
+      gui.updateCoords(id)([x, y]);
+    });
+
+    on('startWireDrag', e => {
+      console.log('App got startWireDrag', { e });
+      pcDragAdd(e.fromId, null);
+    });
+
+    on('wireDragAdd', e => {
+      console.log('App got wireDragAdd', { e });
+      pcDragAdd(e.id, e.relation);
+      console.log({pcDrag});
+    });
+
+    on('wireDragRemove', e => {
+      pcDragRemove(e.id);
+      console.log('App got wireDragRemove', { e });
+      console.log({pcDrag});
+    });
+
+    on('stopWireDrag', () => {
+      console.log('finished dragging with pcdrag state:', pcDrag);
+      pcDragTryConnect();
+      pcDragReset();
+    });
+  }, []);
 
   const [bpm, updateBpm] = useState(400);
 
   // changing keyOffset is a way to force React to unmount old components
   const [keyOffset, setKeyOffset] = useState(0);
 
-  const loadSong = (songJsonStr) => () => {
-    const json = JSON.parse(songJsonStr);
-    const nodes = loadFromJson(json.parts, audio.scheduler);
-    const coords = Object.fromEntries(
-      Object.entries(nodes).map(([k, v]) => [k, v._coords])
-    );
-    gui.setCoords(coords);
-    audio.setNodes(nodes);
-    audio.setBpm(json.bpm);
-    updateBpm(json.bpm);
-    gui.setActives(
-      Object.fromEntries(Object.values(nodes).map(node => [node.id, 0]))
-    );
-    setKeyOffset(n => n + 10000);
-    window.nodes = nodes;
-    console.log('loadSong completed.');
-  };
-
   const handleLoadButton = () => {
     setCurrentPage('LOAD');
-  };
-
-  const setLoadedSong = (song) => {
-    setCurrentPage('MAIN');
-    loadSong(song.json)();
   };
 
   const handleBpmChange = (bpm) => {
@@ -93,31 +135,36 @@ const App = (props) => {
       {currentPage === 'MAIN' && (
         <>
           {soundTypes.map(sound => (
-            <button onClick={addSoundGrid({ audio, gui }, sound)}>
+            <button onClick={() => addSoundGrid(sound)}>
               NEW {sound.toUpperCase()}
             </button>
           ))}
-
+          <button onClick={addRatioBox}>
+            NEW RATIOBOX
+            </button>
           <div className="canvas">
-            {Object.values(audio.nodes).map(n => {
-              const Component = componentTypes[n.type];
-              return (<Component
-                key={n.id + keyOffset} node={n}
-                label={n?.label || n._aspects.sounds[0]}
-                updateCoords={gui.updateCoords(n.id)}
-                forceUpdate={gui.forceUpdate}
-              />);
-            })}
-
-            {Object.values(audio.nodes).map(node => node._parent && (
-              <Line coords={[
-                ...gui.parentCoords(node._parent.id),
-                ...gui.childCoords(node.id)
-              ]} />
-            ))}
+            {Object.entries(components).map(([id, component]) =>
+              component.type === 'soundGrid'
+                ? <SoundGrid
+                  id={Number(id)}
+                  coords={gui.coords[id]}
+                />
+                : component.type === 'ratioBox'
+                ? <RatioBox
+                  id={Number(id)}
+                  coords={gui.coords[id]}
+                />
+                : <div>{component.type}</div>
+            )}
           </div>
         </>
       )}
+
+      {gui.getWires().map(coords => (
+        <Line coords={coords} />
+      ))}
+
+      <DragWire />
 
       {currentPage === 'LOAD' && (
         <LoadSong
@@ -125,7 +172,6 @@ const App = (props) => {
           setSong={setLoadedSong}
         />
       )}
-
 
     </div>
   );

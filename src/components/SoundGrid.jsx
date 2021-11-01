@@ -1,30 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import HorizontalGrid from './HorizontalGrid.jsx';
+import { on, onId, send } from '../eventbus.js';
 
-const toggle = (x) => x === 'on' ? 'off' : 'on';
+const updated = (arr, idx, val) => {
+  const res = [...arr];
+  res[idx] = val;
+  return res;
+}
 
-const SoundGrid = ({ label, node, coords, updateCoords, forceUpdate }) => {
+const SoundGrid = ({ id, coords, label = 'temp' }) => {
   const [active, setActive] = useState(-1);
+  const [status, setStatus] = useState(() => ['off', 'off']);
+
+  const [muted, setMuted] = useState(false);
 
   useEffect(() => {
-    node.setActiveListener(setActive);
-  }, [node]);
+    onId(id, 'noteon', (event) => setActive(event.statusesIdx));
+    onId(id, 'setStatus', (e) => setStatus(status => updated(status, e.index, e.status)));
+    window.aspectCount = 0;
+    onId(id, 'setAspect', (e) => {
+      if (e.aspect === 'statuses') { setStatus(e.values); }
+    });
+  }, []);
+
+  const lengthen = () => { send('lengthen', { id }) };
+  const shorten = () => { send('shorten', { id }) };
+  const setLength = (length) => { send('setLength'), { id, length }};
+  const toggleMute = () => {
+    console.log('mute');
+    if (muted) {
+      send('unmute', { id });
+    } else {
+      send('mute', { id });
+    }
+    setMuted(muted => !muted);
+  };
 
   return (
     <HorizontalGrid
-      label={label}
-      status={node._aspects.statuses}
-      update={i => {
-        node.updateIn('statuses', i, toggle);
+      label={id}
+      id={id}
+      status={status}
+      update={(index, val) => {
+        // node.updateIn('statuses', i, toggle);
+        send('setStatusButton', { id, index, val })
       }}
-      forceUpdate={forceUpdate}
-      node={node}
+      // forceUpdate={forceUpdate}
+      // node={node}
       active={active}
-      startCoords={coords}
-      updateCoords={updateCoords}
-      lengthen={node.lengthen.bind(node)}
-      shorten={node.shorten.bind(node)}
-      mute={() => node.setSounding(!node.sounding)}
+      coords={coords}
+      updateCoords={console.log}
+      lengthen={lengthen}
+      shorten={shorten}
+      setLength={setLength}
+      muted={muted}
+      toggleMute={toggleMute}
     />
   );
 };

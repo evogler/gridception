@@ -1,6 +1,10 @@
 import { log } from './logger.js';
 import { uniqueId } from './util.js';
 import nodeDefaults from './nodedefaults.js';
+import { eventBus, on, onId } from './eventbus.js';
+import { filter } from 'rxjs/operators';
+
+const toggle = (x) => x === 'on' ? 'off' : 'on';
 
 class Node {
   constructor({ times, jsonData } = {}) {
@@ -15,17 +19,22 @@ class Node {
       this._coords = coords;
       this.label = label;
       this.id = id;
-      return;
+    } else {
+      this._parent = null;
+      this._children = [];
+      this._aspects = nodeDefaults();
+      if (times) {
+        this._aspects.times = times;
+      }
+      this._sounding = true;
+      this._timeCache = [];
     }
-
-    this._parent = null;
-    this._children = [];
-    this._aspects = nodeDefaults();
-    if (times) {
-      this._aspects.times = times;
-    }
-    this._sounding = true;
-    this._timeCache = [];
+    onId(this.id, 'mute', () => {
+      this._sounding = false;
+    });
+    onId(this.id, 'unmute', () => {
+      this._sounding = true;
+    });
   }
 
   toJson() {
@@ -40,6 +49,10 @@ class Node {
     };
   }
 
+  delete() {
+    return Promise.resolve();
+  }
+
   setActiveListener(listener) {
     this._activeListener = listener;
   }
@@ -52,6 +65,12 @@ class Node {
 
   addChild(child) {
     this._children.push(child);
+  }
+
+  removeChild(child) {
+    const idx = this._children.indexOf(child);
+    if (idx === -1) { return; }
+    this._children.splice(idx, 1);
   }
 
   setSounding(sounding) {
@@ -70,10 +89,20 @@ class Node {
   }
 
   updateIn(aspect, index, fn) {
-    this._aspects[aspect][index] = fn(this._aspects[aspect][index]);
+    const newStatus = fn(this._aspects[aspect][index]);
+    this._aspects[aspect][index] = newStatus;
     if (aspect === 'times') {
       this._setAbsoluteTimes();
     }
+    eventBus.next({ code: 'setStatus', index, id: this.id, status: newStatus });
+  }
+
+  toggleIn(aspect, index) {
+    this.updateIn(aspect, index, toggle);
+  }
+
+  setIn(aspect, index, value) {
+    this.updateIn(aspect, index, () => value);
   }
 
   lengthen() {
@@ -87,6 +116,17 @@ class Node {
     }
     if (this._aspects.statuses.length > 1) {
       this._aspects.statuses.pop();
+    }
+  }
+
+  setLength(length) {
+    // console.log('received length', length);
+    // return;
+    while (length > this._aspects.statuses.length) {
+      this.lengthen();
+    }
+    while (length < this._aspects.statuses.length) {
+      this.shorten();
     }
   }
 
@@ -145,8 +185,11 @@ class Node {
     const res = {};
     for (const aspect in this._aspects) {
       const arr = this._aspects[aspect];
-      res[aspect] = arr[index % arr.length];
+      const idx = index % arr.length
+      res[aspect] = arr[idx];
+      res[aspect + 'Idx'] = idx;
     }
+    res.index = index;
     return res;
   }
 
@@ -163,7 +206,7 @@ class Node {
   }
 
   getEventsInTimeWindow(startTime, endTime, aspects = null) {
-    log('getEventsInTimeWindow', startTime, endTime);
+    // console.log('getEventsInTimeWindow', startTime, endTime);
     this._extendTimeCache(endTime);
     const res = [];
     let i = this._timeCache.length - 1;

@@ -1,38 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import { eventBus, on } from '../eventbus.js';
+
+import graph from '../graph.js';
 
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return () => setValue(value => value + 1);
 }
 
+
 const useGui = (audio) => {
-  const [actives, setActives] = useState(() => Object.fromEntries(Object.values(audio.nodes).map(node => [node.id, 1])));
+  const [actives, setActives] = useState(() => Object.fromEntries(graph.allNodes()));
   const [currentTime, setCurrentTime] = useState(0);
-  audio.scheduler.addTimeListener((time) => setCurrentTime(time));
-  const updateActive = id => (id, val) => {
-    setActives(acts => ({ ...acts, [id]: val }));
-  }
-  const buttonClick = () => { audio.scheduler.click(); };
-  const [coords, setCoords] = useState(
-    Object.fromEntries(Object.entries(audio.nodes).map(([k, v]) => [k, v._coords]))
-  );
-  const updateCoords = id => val => { setCoords({ ...coords, [id]: val }); };
-  const parentCoords = id => {
-    if ([0, 5].includes(id)) {
-      return [coords[id][0] + 245, coords[id][1] + 55];
+  const [wires, setWires] = useState({});
+  useEffect(() => {
+    on('currentPlayTime', (({ time }) => setCurrentTime(time)));
+
+    on('setParent', ({ childId, parentId }) => {
+      setWires(wires => ({ ...wires, [childId]: parentId }));
+    });
+  }, []);
+
+  const buttonClick = () => { eventBus.next({ code: 'playStop' }) };
+
+  const [coords, setCoords] = useState({});
+  window.coords = coords;
+  const updateCoords = id => val => { setCoords(coords => ({ ...coords, [id]: val })); };
+
+  const getWires = () => {
+    const res = [];
+    for (const [child, parent] of Object.entries(wires)) {
+      res.push([coords[parent][0] + 25,
+                coords[parent][1] + 25,
+                coords[child][0] + 25,
+                coords[child][1] + 25]);
     }
-    return [coords[id][0] + 12, coords[id][1] + 12];
+    return res;
   }
-  const childCoords = id => {
-    if ([0, 5].includes(id)) {
-      return [coords[id][0] + 15, coords[id][1] + 12];
-    }
-    return [coords[id][0] + 12, coords[id][1] + 12];
-  }
+  const removeWiresForNode = (id) => {
+    setWires(wires => {
+      return Object.fromEntries(
+        Object.entries(wires)
+        .filter(([k, v]) => Number(k) !== id && Number(v) !== id));
+    });
+  };
   const forceUpdate = useForceUpdate();
+
   return {
-    actives, setActives, currentTime, setCurrentTime, updateActive, buttonClick,
-    updateCoords, setCoords, coords, childCoords, parentCoords, forceUpdate,
+    actives, setActives, currentTime, setCurrentTime, buttonClick,
+    updateCoords, setCoords, coords, forceUpdate, wires, getWires,
+    removeWiresForNode,
   };
 };
 
